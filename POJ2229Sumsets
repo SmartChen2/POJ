@@ -1,0 +1,32 @@
+package com.company;
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        // write your code here
+        int N;
+        double mod = Math.pow(10, 9);
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        N = sc.nextInt();
+        if (N == 1) {
+            System.out.println(1);
+            return;
+        }
+        long[] map = new long[N+1];
+        map[1] = 1;
+        map[2] = 2;
+
+        for (int i = 3; i < map.length; i++) {
+            if (i % 2 != 0) {
+                map[i] = map[i - 1];
+            }
+            else {
+                map[i] = map[i - 2] + map[i / 2];
+            }
+            map[i] %= mod;
+        }
+        System.out.println(map[N]);
+    }
+}
