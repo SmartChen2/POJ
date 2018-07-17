@@ -1,0 +1,97 @@
+package com.company;
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+
+
+public class Main {
+
+    public static void main(String[] args) {
+        // write your code here
+        int N, d, Case;
+        Case = 0;
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        N = sc.nextInt();
+        d = sc.nextInt();
+        int[][] arr;
+
+        while (N != 0 || d != 0) {
+            boolean flag = true;
+            int radarcnt = 0;
+            int resortcnt = 0;
+            int lx, ly;
+            double ox2, po;
+
+            arr = new int[N][2];
+            for (int i = 0; i < N; i++) {
+                arr[i][0] = sc.nextInt();
+                arr[i][1] = sc.nextInt();
+                if (arr[i][1] > d){
+                    //只在这里判出ERR
+                    flag = false;
+                }
+            }
+
+            if (flag) {
+                sort(arr, new int[] {0});
+                po = arr[resortcnt][0] - (double)d;
+                //一次性放一个雷达 确定l的位置之后 确定圆心o的位置 再进行判定
+                //加入变量 po
+                while (resortcnt < N) {
+                    lx = arr[resortcnt][0];
+                    ly = arr[resortcnt][1];
+                    radarcnt++;
+
+                    ox2 = Math.sqrt(d * d - ly * ly) + (double) lx;
+
+                    //the centre of the new circle is on the left side of the old one.
+                    if (po > ox2) {
+                        //locate the position of the centre of the circle from two points.
+                        radarcnt--;
+                    }
+
+                    while ((lx - ox2) * (lx - ox2) + ly * ly <= d * d) {
+                        resortcnt++;
+                        if (resortcnt >= N)
+                            break;
+                        lx = arr[resortcnt][0];
+                        ly = arr[resortcnt][1];
+                    }
+                    //right answer output
+                    po = ox2;
+                    if (resortcnt >= N) {
+                        Case++;
+                        System.out.println("Case " + Case + ": " + radarcnt);
+                        break;
+                    }
+                }
+            }
+            else {
+                Case++;
+                System.out.println("Case " + Case + ": " + -1);
+            }
+            N = sc.nextInt();
+            d = sc.nextInt();
+        }
+    }
+    public static void sort(int[][] ob, final int[] order) {
+        Arrays.sort(ob, new Comparator<Object>() {
+            public int compare(Object o1, Object o2) {
+                int[] one = (int[]) o1;
+                int[] two = (int[]) o2;
+                for (int i = 0; i < order.length; i++) {
+                    int k = order[i];
+                    if (one[k] > two[k]) {
+                        return 1;
+                    } else if (one[k] < two[k]) {
+                        return -1;
+                    } else {
+                        continue;  //如果按一条件比较结果相等，就使用第二个条件进行比较。
+                    }
+                }
+                return 0;
+            }
+        });
+    }
+}
