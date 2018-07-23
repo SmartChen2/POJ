@@ -21,7 +21,6 @@ public class Main {
         int[] fl = new int[n];
         while (cnt < n) {
             res++;
-            //find the goal cow
 
             int endtime = - 1;
             boolean flag = false;
