@@ -1,0 +1,42 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n = sc.nextInt();
+
+        char[] c = sc.next().toCharArray();
+        char[] ch = new char[n + 1];
+        for (int i = 0; i < c.length; i++) {
+            ch[i + 1] = c[i];
+        }
+        int[][] DP = new int[2][n + 1];
+        int roll = 1;
+
+        for (int i = 1; i < ch.length; i++) {
+            for (int j = i; j >= 1; j--) {
+                if (ch[i] == ch[j]) {
+                    if (roll % 2 == 1)
+                        DP[1][j] = DP[1][i];
+                    else
+                        DP[0][j] = DP[0][i];
+                }
+                else {
+                    if (roll % 2 == 1)
+                        DP[1][j] = Math.min(DP[0][j], DP[1][j + 1]) + 1;
+                    else
+                        DP[0][j] = Math.min(DP[1][j], DP[0][j + 1]) + 1;
+                    //DP[i][j] = Math.min(DP[i - 1][j], DP[i][j + 1]) + 1;
+                }
+            }
+            roll++;
+        }
+        if (roll % 2 == 1)
+            System.out.println(DP[0][1]);
+        else
+            System.out.println(DP[1][1]);
+    }
+}
