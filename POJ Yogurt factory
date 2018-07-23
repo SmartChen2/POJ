@@ -1,0 +1,38 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int N = sc.nextInt();
+        int S = sc.nextInt();
+        int C, NC;
+        int Y, NY;
+
+        NC = sc.nextInt();
+        NY = sc.nextInt();
+        long totalcost = 0;
+        int storageUnit = 0;
+
+        for (int i = 0; i < N; i++) {
+            C = NC;
+            Y = NY;
+            if (i < N - 1) {
+                NC = sc.nextInt();
+                NY = sc.nextInt();
+            }
+            totalcost += (Y - storageUnit) * C;
+            storageUnit = 0;
+            //这里判断下一周要生产多少
+
+            if (i < N - 1)
+                if ((C + S) < NC) {
+                    storageUnit = NY;
+                    totalcost += (C + S) * NY;
+                }
+        }
+        System.out.println(totalcost);
+    }
+}
