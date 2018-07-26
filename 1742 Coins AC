@@ -1,0 +1,54 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        while (n != 0 || m != 0) {
+
+            int[] val = new int[n];
+            int[] num = new int[n];
+            for (int i = 0; i < n; i++)
+                val[i] = sc.nextInt();
+            for (int i = 0; i < n; i++)
+                num[i] = sc.nextInt();
+
+            boolean[] flag = new boolean[m + 1];
+            short[] time = new short[m + 1];
+
+
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < time.length; j++) {
+                    time[j] = 0;
+                }
+                if(val[i] <= m) {
+                    if (!flag[val[i]]) {//原来没有这个面值
+                        time[val[i]] = 1;
+                        flag[val[i]] = true;
+                    }
+                }
+                for (int j = 1; j <= m; j++) {
+                    if (j + val[i] > m) break;//剪枝的手段 一个都放不下了 以后也不用放了
+                    if (flag[j] && time[j] < num[i]) {
+                        if (!flag[j + val[i]])
+                            time[j + val[i]] = (short)(time[j] + 1);
+                        flag[j + val[i]] = true;
+                    }
+                }
+            }
+            int total = 0;
+            for (int i = 0; i < flag.length; i++) {
+                if (flag[i])
+                    total++;
+            }
+            System.out.println(total);
+            n = sc.nextInt();
+            m = sc.nextInt();
+        }
+    }
+}
