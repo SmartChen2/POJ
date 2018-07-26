@@ -21,7 +21,6 @@ public class Main {
             boolean[] flag = new boolean[m + 1];
             short[] time = new short[m + 1];
 
-
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < time.length; j++) {
                     time[j] = 0;
