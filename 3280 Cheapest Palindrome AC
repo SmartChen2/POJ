@@ -1,0 +1,38 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int N = sc.nextInt();
+        int M = sc.nextInt();
+        char[] c = sc.next().toCharArray();
+        int[][]DP = new int[2][M+2];
+        int e = 0;
+
+        short[][] cost = new short[26][2];
+        for (int i = 0; i < N; i++) {
+            char temp = sc.next().charAt(0);
+            cost[temp - 'a'][0] = sc.nextShort();
+            cost[temp - 'a'][1] = sc.nextShort();
+        }
+
+        for (int i = 0; i < M; i++) {
+            for (int j = i; j >= 0; j--) {
+                if (c[i] == c[j]) {
+                    DP[e][j] = DP[1 - e][j + 1];
+                }
+                else {
+                    DP[e][j] = Math.min((DP[1 - e][j] + Math.min(cost[(int)c[i] - 'a'][0], cost[(int)c[i] - 'a'][1])), (DP[e][j + 1] + Math.min(cost[(int)c[j] - 'a'][0], cost[(int)c[j] - 'a'][1])));//等于先前迭代的内容加上 最少的cost 有四种可能 在前面/后面 加或减
+                }
+               // System.out.print(DP[e][j] + " ");
+            }
+            e = 1 - e;
+            //System.out.println();
+        }
+        System.out.println(DP[1 - e][0]);
+    }
+}
