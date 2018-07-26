@@ -1,0 +1,30 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n = sc.nextInt();
+
+        int[] num = new int[n];
+        int[] ans = new int[n];
+        for (int i = 0; i < n; i++) {
+            num[i] = sc.nextInt();
+        }
+
+        int max = 1;
+        for (int i = 0; i < n; i++) {
+            ans[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (num[j] < num[i])
+                    ans[i] = Math.max(ans[i], ans[j] + 1);
+
+                if (max < ans[i])
+                    max = ans[i];
+            }
+        }
+        System.out.println(max);
+    }
+}
