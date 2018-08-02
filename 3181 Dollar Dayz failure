@@ -1,0 +1,38 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int N = sc.nextInt();
+
+        int bigK = sc.nextInt();//共有K种dollar
+        long[][] dp = new long[N + 2][bigK + 1];
+        dp[1][1] = 1;
+        for (int i = 1; i < N + 1; i++) {
+            int cnt = 0;
+            for (int j = 1; j <= bigK; j++) {//j是硬币面值
+                 if (i == 1) {
+                     dp[i][j] = 1;
+                     continue;
+                 }
+                dp[i][j] = Math.max(dp[i - 1][j] + cnt, dp[i][j - 1]);
+
+                for (int k = 1; k <= i; k++) {//k是数目
+                    if (i - k * j < 0) break;
+                    dp[i][j] = Math.max(dp[i - k * j][j], dp[i][j]);
+                    if (i - k * j > 1 && i - k * j <= j) {
+                        dp[i][j] += 1;
+                        cnt++;
+                    }
+                }
+                if(i == j && i != 1)
+                    dp[i][j] += 1;
+
+            }
+        }
+        System.out.println(dp[N][bigK]);
+    }
+}
