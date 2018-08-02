@@ -1,0 +1,31 @@
+//the same principle as poj2229 Sumsets
+
+package com.company;
+import java.io.BufferedInputStream;
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        // write your code here
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int N = sc.nextInt();
+        int bigK = sc.nextInt();
+
+        BigInteger[] dp = new BigInteger[N + 1];
+        dp[0] = new BigInteger("1");
+        for (int i = 1; i < dp.length; i++) {
+            dp[i] = new BigInteger("0");
+
+        }
+        for (int i = 1; i <= bigK; i++) {
+            for (int j = 1; j <= N; j++) {
+                if (j >= i) {//能买
+                    dp[j] = dp[j].add(dp[j - i]);
+                }
+            }
+        }
+        System.out.println(dp[N]);
+    }
+}
