@@ -1,0 +1,73 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Scanner;
+
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int T = sc.nextInt();
+        while (T-- > 0) {
+            int n = sc.nextInt();
+            int[][] arr = new int[n][2];
+
+            LinkedList<Integer> ll = new LinkedList<Integer>();
+            for (int i = 0; i < n; i++) {
+                arr[i][0] = sc.nextInt();
+                arr[i][1] = sc.nextInt();
+            }
+            sort(arr, new int[]{0, 1});
+
+            int minute = 1;
+            ll.add(arr[0][1]);
+
+            for (int i = 1; i < n; i++) {
+                int index = 0;
+                int temp = ll.get(index);
+                for (Integer element : ll){
+                    if (temp <= arr[i][1]) {
+                        //根据贪心算法 优先队列的定义 小于或者等于就用这条线就行了  继续往后走
+                        break;
+                    }
+                    else{
+                        index++;
+                        if (index < ll.size())
+                        temp = ll.get(index);
+                    }
+                }
+
+                if(index < ll.size())
+                    ll.remove(index);//小于的话不用新开一条线
+                else
+                    minute++;//否则新开一条线
+
+                ll.add(index, arr[i][1]);
+            }
+
+
+            System.out.println(minute);
+        }
+    }
+    public static void sort(int[][] ob, final int[] order) {
+        Arrays.sort(ob, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                for (int i = 0; i < order.length; i++) {
+                    int k = order[i];
+                    if (o1[k] > o2[k]) {
+                        return 1;
+                    }
+                    else if (o1[k] < o2[k])
+                        return -1;
+                    else
+                        continue;
+                }
+                return 0;
+            }
+        });
+    }
+}
