@@ -1,0 +1,57 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class Main{
+
+    public static void main(String args[]){
+        Scanner s = new Scanner(new BufferedInputStream(System.in));
+        LinkedList<stick> ll = new LinkedList<stick>();
+        int T = s.nextInt();
+
+        for(int t = 0; t < T; t++){
+            int n = s.nextInt();
+            stick sts[] = new stick[n];
+            ll.clear();
+
+            for(int i = 0; i < n; i++){
+                sts[i] = new stick();
+                sts[i].l = s.nextInt();
+                sts[i].w = s.nextInt();
+            }
+            Arrays.sort(sts);
+            ll.add(sts[0]);
+            int ans = 1;
+
+            for(int i = 1; i < n; i++){
+                int index = 0;
+                for(stick st : ll){
+                    if(sts[i].l >= st.l & sts[i].w >= st.w)
+                        break;
+                    index++;
+                }
+
+                if(index >= ll.size()){
+                    ans ++;
+                }else{
+                    ll.remove(index);
+                }
+                ll.add(index, sts[i]);
+            }
+            System.out.println(ans);
+        }
+    }
+}
+
+class stick implements Comparable<stick>{
+    int l,w;
+    public int compareTo(stick o) {
+        if(this.l == o.l)
+            return this.w - o.w;
+        else
+            return this.l - o.l;
+    }
+}
