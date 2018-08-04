@@ -1,0 +1,50 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main{
+
+    public static void main(String args[]){
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+
+        int T = sc.nextInt();
+        for(int t = 0; t < T; t++){
+            int n = sc.nextInt();
+            int[] dp = new int[n];
+            Stick[] sti = new Stick[n];
+            for (int i = 0; i < n; i++) {
+                sti[i] = new Stick();
+                sti[i].l = sc.nextInt();
+                sti[i].w = sc.nextInt();
+            }
+
+            Arrays.sort(sti);
+            int dplength = 0;
+            int j;
+            for (int i = 0; i < n; i++) {
+                for (j = 0; j < dplength; j++) {
+                    if (sti[i].w >= dp[j]) {//不用新开一个 放就行了
+                        break;
+                    }
+                }
+                if (j >= dplength)//新开一个
+                    dplength++;
+                dp[j] = sti[i].w;
+            }
+            System.out.println(dplength);
+        }
+    }
+}
+
+class Stick implements Comparable<Stick> {
+    int l, w;
+    @Override
+    public int compareTo(Stick o) {
+        if (o.l == this.l)
+            return this.w - o.w;
+        else
+            return this.l - o.l;
+    }
+}
