@@ -1,0 +1,62 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int T = sc.nextInt();
+        int A = sc.nextInt();
+        int S = sc.nextInt();
+        int B = sc.nextInt();
+        int[] arr = new int[A];
+
+        for (int i = 0; i < A; i++) {
+            arr[i] = sc.nextInt();
+        }
+        Arrays.sort(arr);
+        int[] numarr = new int[T + 1];
+
+        for (int i = 0,j = 1; i < arr.length - 1; i++, j++) {
+            int count = 1;
+            while (arr[i] == arr[i + 1]) {
+                i++;
+                count++;
+                if (i >= arr.length - 1) break;
+            }
+            if (i == arr.length - 2 && arr[i] != arr[i + 1])
+                numarr[j + 1] = 1;//表示存放的数量
+
+            numarr[j] = count;//表示存放的数量
+        }
+
+        int[][] dp = new int[2][B + 1];
+        int mod = 1000000;
+        int e = 0;
+        int sumcnt = 0;
+
+        for (int i = 1; i < T + 1; i++) {
+            sumcnt += numarr[i];
+            for (int j = 1; j < B + 1 && j <= sumcnt; j++) {
+                dp[e][j] = 0;
+                for (int k = Math.max(j - numarr[i], 1); k <= j; k++) {
+                    dp[e][j] += dp[1 - e][k];
+                }
+                if (numarr[i] - j >= 0)
+                    dp[e][j] += 1;
+                dp[e][j] %= mod;
+            }
+            e = 1 - e;
+        }
+        e = 1 - e;
+        int ans = 0;
+        for (int i = S; i <= B; i++) {
+            ans += dp[e][i];
+            ans %= mod;
+        }
+        if (2 > 1)
+            System.out.println(ans);
+    }
+}
