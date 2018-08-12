@@ -1,0 +1,53 @@
+package com.company;
+
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    static int N, max, mild;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        N = sc.nextInt();
+        max = 0;
+        int[][] data = new int[N][2];
+        int filter = 0, bonus = 0;
+        int n, m;
+        for (int i = 0; i < N; i++) {
+            n = sc.nextInt();
+            m = sc.nextInt();
+            if (n <= 0 && m <= 0) {
+                filter++;
+                continue;
+            }
+            if (n >= 0 && m >= 0) {
+                bonus += (n + m);
+                filter++;
+                continue;
+            }
+            data[i - filter][0] = n;
+            data[i - filter][1] = m;
+        }
+        N -= filter;
+        mild = data[0][0] + data[0][1];
+
+        DFS(data[0][0], data[0][1], data, 1);
+        System.out.println(max + bonus);
+    }
+    public static void DFS(int data0, int data1, int[][] data, int index) {
+        if (index == N - 1)
+            return;
+        for (int i = index; i < N; i++) {
+            int d0, d1;
+            d0 = data0 + data[i][0];
+            d1 = data1 + data[i][1];
+
+            if (d0 >= 0 && d1 >= 0)
+                max = Math.max(max, (d0 + d1));
+            if (d0 - data[0][0] >= 0 && d1 - data[0][1] >= 0 )
+                max = Math.max(max, (d0 + d1 - mild));
+
+            DFS(d0, d1, data, i + 1);
+        }
+    }
+}
