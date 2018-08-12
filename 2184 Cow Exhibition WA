@@ -1,0 +1,113 @@
+
+
+import java.io.BufferedInputStream;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int N = sc.nextInt();
+
+        int[][] data = new int[N][2];
+        int filter = 0, bonus = 0;
+        int n, m;
+
+        if (N == 2) {
+            data[0][0] = sc.nextInt();
+            data[0][1] = sc.nextInt();
+            data[1][0] = sc.nextInt();
+            data[1][1] = sc.nextInt();
+            int ans = 0;
+            if(data[0][0] >= 0 &&  + data[0][1] >= 0 && data[1][0] >= 0 && data[1][1] >= 0){
+                ans = data[0][0] + data[0][1] + data[1][0] + data[1][1];
+            }
+            else if (data[0][0] < 0 && data[0][1] < 0) {
+                if (data[1][0] >= 0 && data[1][1] >= 0)
+                    ans = data[1][0] + data[1][1];
+            }
+            else if (data[1][0] < 0 && data[1][1] < 0) {
+                if (data[0][0] >= 0 && data[0][1] >= 0)
+                    ans = data[0][0] + data[0][1];
+            }
+            int d0 = data[0][0] + data[1][0];
+            int d1 = data[0][1] + data[1][1];
+            if (d0 >= 0 && d1 >= 0)
+                ans = Math.max(ans, (d0 + d1));
+
+            System.out.println(ans);
+            return;
+        }
+        for (int i = 0; i < N; i++) {
+            n = sc.nextInt();
+            m = sc.nextInt();
+            if (n <= 0 && m <= 0) {
+                filter++;
+                continue;
+            }
+            if (n >= 0 && m >= 0) {
+                bonus += (n + m);
+                filter++;
+                continue;
+            }
+            data[i - filter][0] = n;
+            data[i - filter][1] = m;
+        }
+
+        N -= filter;
+        int max = 0;
+
+
+        int mild = data[0][0] + data[0][1];
+        Queue<Node> q = new LinkedList<Node>();
+
+        Node node = new Node();
+        node.data0 = data[0][0];
+        node.data1 = data[0][1];
+        node.index = 1;
+        q.add(node);
+
+
+        for (int j = 1; j < N; j++) {
+            int d0 = data[0][0] + data[j][0];
+            int d1 = data[0][1] + data[j][1];
+
+            if (d0 >= 0 && d1 >= 0)
+                max = Math.max(max, (d0 + d1));
+        }
+
+        int d0, d1;
+        while (q.peek() != null) {
+            node = q.poll();
+            for (int i = node.index; i < N - 1; i++) {
+                 d0 = node.data0 + data[i][0];
+                 d1 = node.data1 + data[i][1];
+                if (i == node.index) {
+                    Node next = new Node();
+                    next.index = i + 1;
+                    next.data0 = d0;
+                    next.data1 = d1;
+                    q.add(next);//新的节点 下面把正事给办了
+                }
+
+                for (int j = i + 1; j < N; j++) {
+                    d0 += data[j][0];
+                    d1 += data[j][1];
+                    if (d0 >= 0 && d1 >= 0)
+                        max = Math.max(max, (d0 + d1));
+                    if (d0 - data[0][0] >= 0 && d1 - data[0][1] >= 0)
+                        max = Math.max(max, (d0 + d1 - data[0][0] - data[0][1]));
+                    d0 -= data[j][0];
+                    d1 -= data[j][1];
+                }
+            }
+        }
+        System.out.println(max + bonus);
+    }
+}
+
+class Node{
+    int data0, data1;
+    int index;
+}
