@@ -1,0 +1,71 @@
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n = 6;
+        int time = 1;
+        int[] arr = new int[n];
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextInt();
+            sum += (arr[i] * (i + 1));
+        }
+
+        while (sum != 0) {
+            if (sum % 2 != 0) {
+                System.out.println("Collection #" + time + ":");
+                System.out.println("Can't be divided.");
+                time++;
+                System.out.println();
+            }
+            else {
+                int half = sum / 2;
+
+                boolean[] val = new boolean[half + 1];
+                val[0] = true;
+                int[] numarr = new int[half + 1];
+
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < val.length; j++) {
+                        if (!val[j]) continue;//之前没有放过 继续
+                        if (numarr[j] < arr[i]) {//可以继续放
+                            if (j + i + 1 < val.length) {
+                                if (!val[j + i + 1]) {//attention!
+                                    val[j + i + 1] = true;
+                                    numarr[j + i + 1] = numarr[j] + 1;
+                                }
+                            }
+                            else
+                                break;
+                        }
+                    }
+                    for (int j = 0; j < numarr.length; j++) {
+                        numarr[j] = 0;
+                    }
+                }
+
+                if (val[half]) {
+                    System.out.println("Collection #" + time + ":");
+                    System.out.println("Can be divided.");
+                    System.out.println();
+                    time++;
+                } else {
+                    System.out.println("Collection #" + time + ":");
+                    System.out.println("Can't be divided.");
+                    System.out.println();
+                    time++;
+                }
+            }
+
+            sum = 0;
+            for (int i = 0; i < n; i++) {
+                arr[i] = sc.nextInt();
+                sum += (arr[i] * (i + 1));
+            }
+        }
+    }
+}
