@@ -1,0 +1,66 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n = 6;
+        int time = 1;
+        int[] arr = new int[n];
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextInt();
+            sum += (arr[i] * (i + 1));
+        }
+
+        while (sum != 0) {
+            if (sum % 2 != 0) {
+                System.out.println("Collection #" + time + ":");
+                System.out.println("Can't be divided.");
+                time++;
+                System.out.println();
+            }
+            else {
+                int half = sum / 2;
+
+                int[] dp = new int[half + 1];
+                for (int i = 0; i < dp.length; i++) {
+                    dp[i] = -1;
+                }
+                dp[0] = 0;
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < dp.length; j++) {
+                        //判断是自己生成的还是原来有的
+                        if (dp[j] >= 0) {//这是原来就有的 重新赋值
+                            dp[j] = arr[i];
+                        }
+                        //这是自己生成的
+                        if (j - i - 1 >= 0 && dp[j - i - 1] > 0 && dp[j] < 0)//dp[j] < 0的话就是就是原来没有的象征 只能从以前继承
+                            dp[j] = dp[j - i - 1] - 1;
+                    }
+                }
+
+                if (dp[half] >= 0) {
+                    System.out.println("Collection #" + time + ":");
+                    System.out.println("Can be divided.");
+                    System.out.println();
+                    time++;
+                } else {
+                    System.out.println("Collection #" + time + ":");
+                    System.out.println("Can't be divided.");
+                    System.out.println();
+                    time++;
+                }
+            }
+
+            sum = 0;
+            for (int i = 0; i < n; i++) {
+                arr[i] = sc.nextInt();
+                sum += (arr[i] * (i + 1));
+            }
+        }
+    }
+}
