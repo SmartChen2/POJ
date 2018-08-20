@@ -1,0 +1,33 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int F = sc.nextInt();
+        int V = sc.nextInt();
+        int[][] arr = new int[V + 1][F + 1];
+        int[][] dp = new int[2][F + 1];
+
+        for (int i = 1; i <= F; i++) {
+            for (int j = 1; j <= V; j++) {
+                arr[j][i] = sc.nextInt();
+            }
+            dp[0][i] = -10000000;
+            dp[1][i] = -10000000;
+        }
+
+        int e = 0;
+        for (int i = 1; i <= V; i++) {
+            e = 1 - e;
+            for (int j = 1; j <= F; j++) {
+                if (j > i) break;
+                dp[e][j] = Math.max(dp[1 - e][j], dp[1 - e][j - 1] + arr[i][j]);
+            }
+        }
+        System.out.println(dp[e][F]);
+    }
+}
+
