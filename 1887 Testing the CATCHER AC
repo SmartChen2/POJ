@@ -1,0 +1,47 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        List<Integer> ll = new LinkedList<Integer>();
+        int cas = 0;
+        int temp = sc.nextInt();
+
+
+        while (temp > -1) {
+            ll.clear();
+            //System.out.println(temp);
+            int N = 0;
+            while (temp > -1) {
+                ll.add(temp);
+                N++;
+                temp = sc.nextInt();
+            }
+            int[] dp = new int[N + 1];
+            int lmax = 0;
+            for (int i = 0; i < N; i++) {
+                temp = ((LinkedList<Integer>) ll).pollFirst();
+                int l = 0, r = N - 1;
+                while (l < r) {
+                    int mid = (l + r) / 2;
+                    if (dp[mid] > temp)
+                        l = mid + 1;
+                    else
+                        r = mid;
+                }
+                lmax = Math.max(lmax, l);
+                dp[l] = temp;
+            }
+            cas++;
+            System.out.println("Test #" + cas + ":");
+            System.out.println("  maximum possible interceptions: " + (lmax + 1));
+            System.out.println();
+            temp = sc.nextInt();
+        }
+    }
+}
