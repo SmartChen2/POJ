@@ -1,0 +1,90 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int times = sc.nextInt();
+        for (int cnt = 0; cnt < times; cnt++) {
+            int N = sc.nextInt();
+            long C = sc.nextInt();
+            long[][][] dp = new long[N + 1][N + 1][2];
+            dp[1][1][1] = 1;
+            dp[1][1][0] = 1;
+
+            long bigcnt = 0, smallcnt = 0, bigtemp, smalltemp;
+            //dp[i][j][0]是下一个要放比它小的 dp[i][j][1]是下一个要放比它大的
+            for (int i = 2; i <= N; i++) {
+                smallcnt = 0;
+                bigcnt = 0;
+                for (int j = 1; j <= N; j++) {
+                    smallcnt += dp[i - 1][j][0];
+                }
+                for (int j = 1; j <= i; j++) {
+
+                    dp[i][j][0] = bigcnt;//dp[e][j][0]是下一个要放比它小的 bigcnt
+                    dp[i][j][1] = smallcnt;//dp[e][j][0]是下一个要放比它大的 smallcnt 放了之后要放大的了
+                    bigcnt += dp[i - 1][j][1];
+                    smallcnt -= dp[i - 1][j][0];
+                }
+            }
+            long sum = 0;
+            String ans = "";
+            int e = 1;
+            int j = 1;
+            int temp = 0;
+            int temp2 = 0;
+            for (int i = N; i >= 1; i--) {
+                e = 1 - e;
+                sum = 0;
+                if (i == N) {
+                        for (j = 1; j <= N; j++) {
+                            boolean flag = false;
+                            for (int k = 0; k < 2; k++) {
+                                sum += dp[i][j][k];
+                                if (sum >= C) {
+                                    C = (sum - C) + dp[i][j][k];
+                                    ans += j;
+                                    flag = true;
+                                    e = k;
+                                    if (e == 0)
+                                        temp2++;
+                                    else
+                                        temp++;
+                                    break;
+                                }
+                            }
+                            if (flag)
+                                break;
+                        }
+                }
+                else {
+                    if (e == 1) {
+                        for (j = 1; j < dp.length; j++) {
+                            sum += dp[i][j][e];
+                            if (sum >= C) {
+                                C = (sum - C) + dp[i][j][e];
+                                ans += " " + (j + temp);
+                                temp2++;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        for (; j < dp.length; j++) {
+                            sum += dp[i][j][e];
+                            if (sum >= C) {
+                                C = (sum - C) + dp[i][j][e];
+                                ans += " " + (j + temp2);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(ans);
+        }
+    }
+}
