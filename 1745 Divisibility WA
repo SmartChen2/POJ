@@ -1,0 +1,51 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        final int MAX = 210;
+        int N = sc.nextInt();
+        int K = sc.nextInt();
+        boolean[] val = new boolean[MAX];
+        boolean[] flag = new boolean[MAX];
+        boolean[] flag2 = new boolean[MAX];
+        int[] arr = new int[N];
+        for (int i = 0; i < N; i++) {
+            arr[i] = (sc.nextInt() % K);
+        }
+        int swi = 105;
+        val[arr[0] + swi] = true;
+
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < MAX; j++) {
+                flag[j] = false;//都是没来过的
+            }
+            for (int j = swi - K - 3; j < swi + K + 3; j++) {
+                if (val[j] && !flag[j]) {
+                    if (!val[((j - swi + arr[i]) % K) + swi])
+                        flag[((j - swi + arr[i]) % K) + swi] = true;//完全是新来的 这轮迭代不能用 原来就有的话 就可以继续用
+                    else //val[((j - swi + arr[i]) % K) + swi] 原来就有的+新来的 双ture 后面不用除掉它
+                        flag2[((j - swi + arr[i]) % K) + swi] = true;//我是新来的 不能除掉我
+
+                    if (!val[((j - swi - arr[i]) % K) + swi])
+                        flag[((j - swi - arr[i]) % K) + swi] = true;
+                    else
+                        flag2[((j - swi + arr[i]) % K) + swi] = true;
+
+                    val[((j - swi + arr[i]) % K) + swi] = true;
+                    val[((j - swi - arr[i]) % K) + swi] = true;
+                    if (!flag2[j])
+                        val[j] = false;
+                }
+            }
+        }
+        if (val[swi])
+            System.out.println("Divisible");
+        else
+            System.out.println("Not divisible");
+
+    }
+}
