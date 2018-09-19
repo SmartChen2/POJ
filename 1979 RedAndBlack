@@ -1,0 +1,50 @@
+package com.company;
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    private static int total;
+    public static void main(String[] args) {
+        // write your code here
+
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n, m;
+        m = sc.nextInt();
+        n = sc.nextInt();
+        char[][] map;
+        int[][] d = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        while (n > 0 && m > 0) {
+            total = 1;
+            map = new char[n][m];
+            for (int i = 0; i < map.length; i++) {
+                map[i] = sc.next().toCharArray();
+            }
+            //get input
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    if (map[i][j] == '@') {
+                        map[i][j] = '#';
+                        DFS(map, d, i, j);
+                        break;
+                    }
+                }
+            }
+            System.out.println(total);
+            m = sc.nextInt();
+            n = sc.nextInt();
+        }
+    }
+    public static void DFS(char[][] map, int[][] d, int x, int y) {
+        int xx, yy;
+        for (int i = 0; i < d.length; i++) {
+            xx = x + d[i][0];
+            yy = y + d[i][1];
+            if (xx < 0 || yy < 0 || xx >= map.length || yy >= map[0].length) continue;
+            if (map[xx][yy] == '#') continue;
+            total++;
+            map[xx][yy] = '#';
+            DFS(map, d, xx, yy);
+        }
+    }
+}
