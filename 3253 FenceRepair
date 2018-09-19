@@ -1,0 +1,46 @@
+package com.company;
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+
+
+    public static void main(String[] args) {
+        // write your code here
+
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n, min1, min2, NNNN;
+        n = sc.nextInt();
+        NNNN = n;
+        int[] arr = new int[n + 1];
+        boolean[] flag = new boolean[n];
+        long total = 0;
+        arr[n] = Integer.MAX_VALUE;
+
+        for (int j = 0; j < n; j++) {
+            arr[j] = sc.nextInt();
+            flag[j] = false;
+        }
+
+        while (n > 1) {
+            min1 = NNNN;
+            min2 = NNNN;
+            for (int i = 0; i < n; i++) {
+                if (arr[i] < arr[min1]) {
+                    min2 = min1;
+                    min1 = i;
+                }
+                else if(arr[i] < arr[min2]) {
+                    min2 = i;
+                }
+            }
+            n--;
+            total = total + arr[min1] + arr[min2];
+            arr[min1] = arr[min1] + arr[min2];
+            arr[min2] = arr[n];
+        }
+
+        System.out.println(total);
+    }
+
+}
