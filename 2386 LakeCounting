@@ -1,0 +1,48 @@
+package com.company;
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        // write your code here
+        int[][] d =  {{0, 1}, {0, -1}, {1, 0}, {-1, 0},  {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int n, m, i, j;
+        n = sc.nextInt();
+        m = sc.nextInt();
+        char[][] map = new char[n][m];
+        boolean[][] vis = new boolean[n][m];
+        int total = 0;
+        String str;
+
+        for (i = 0; i < n; i++) {
+            str = sc.next();
+            map[i] = str.toCharArray();
+        }
+
+        for(i = 0; i < n; i++) {
+            for (j = 0; j < m; j++) {
+                if (vis[i][j] == true) continue;//已经来过了 不用再检验
+                vis[i][j] = true;
+                if (map[i][j] != 'W') continue; //找到等于W的 然后DFS
+                total++;
+                DFS(map, i, j, d, vis);
+            }
+
+        }
+        System.out.println(total);
+    }
+    public static void DFS(char[][] map, int x, int y, int[][] d, boolean[][] vis) {
+        int i, xx, yy;
+        for(i = 0; i < 8; i++) {
+            xx = x + d[i][0];
+            yy = y + d[i][1];
+            if(xx < 0 || yy < 0 || xx >= map.length || yy >= map[0].length) continue;//越界了
+            if (vis[xx][yy] == true) continue;//来过了 不用来了
+            vis[xx][yy] = true;
+            if (map[xx][yy] != 'W') continue; //找到等于W的 继续DFS
+            DFS(map, xx, yy, d, vis);
+        }
+    }
+}
