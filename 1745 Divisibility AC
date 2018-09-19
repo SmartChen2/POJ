@@ -1,0 +1,34 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        final int MAX = 105;
+        int N = sc.nextInt();
+        int K = sc.nextInt();
+        boolean[][] dp = new boolean[N + 1][MAX];
+
+        int[] arr = new int[N];
+        for (int i = 0; i < N; i++) {
+            arr[i] = Math.abs((sc.nextInt() % K));
+        }
+        dp[0][arr[0]] = true;
+
+        for (int i = 0; i < N - 1; i++) {
+            for (int j = 0; j < K + 2; j++) {
+                if (dp[i][j]) {
+                    dp[i + 1][((j + arr[i + 1]) % K)] = true;
+                    dp[i + 1][(Math.abs(j - arr[i + 1]) % K)] = true;
+                }
+            }
+        }
+
+        if (dp[N - 1][0])
+            System.out.println("Divisible");
+        else
+            System.out.println("Not divisible");
+    }
+}
