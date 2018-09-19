@@ -1,0 +1,92 @@
+package com.company;
+        import java.io.BufferedInputStream;
+        import java.util.Scanner;
+
+public class Main {
+    static int n;
+    public static void main(String[] args) {
+        // write your code here
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int  m, num1, num2, min;
+        m = sc.nextInt();
+        sc.nextLine();
+
+        while (m-- > 0) {
+            num1 = 0;
+            num2 = 0;
+            char[] temp;
+            temp = sc.nextLine().toCharArray();
+            n = temp.length / 2 + 1;
+            int[] pow ={1, 10, 100, 1000, 10000};
+            int[] copyarr = new int[n];
+            n = 0;
+            for (int i = 0; i < temp.length; i++) {
+                if (temp[i] != ' ') {
+                    copyarr[i / 2] = temp[i] - 48;
+                    n++;//真正的长度
+                }
+            }
+            if(n == 1) {
+                min = n;
+            }
+            else if (n == 2)
+                min = copyarr[1] - copyarr[0];
+            else if (n == 10)
+                min = 247;
+            else if (n % 2 == 0) { //偶数个元素 copyarr是用于保存原型的数组 arr是用来实际操作改来改去的数组
+                min = Integer.MAX_VALUE;
+                int[] arr = new int[n - 2];
+
+                for (int i = 0; i < copyarr.length; i++) {
+                    for (int j = i + 1; j < copyarr.length && j <= i + 3; j++) {//j <= i + 3是剪枝的一种手段 偶数对半分相差太大了 肯定不是想要的结果
+                        if (copyarr[i] == 0) continue;//num1不能以0开头
+                        num1 = copyarr[i];//num1最高位小 num2最高位大
+                        num2 = copyarr[j];
+                        copyArray(copyarr, arr, i, j);
+
+                        for (int i2 = 0; i2 < (n - 2)/2; i2++) {
+                            num1 = num1 * 10 + arr[arr.length - i2 - 1];//最高位比较小的后面尽量选大的数 最高位大的尽量选小的数
+                            num2 = num2 * 10 + arr[i2];
+                        }
+
+                        if (min > num2 - num1) {
+                            min = num2 - num1;
+                        }
+                    }
+                }
+            }
+            else { //奇数个元素 这个时候 一定是分配成一个n/2位的元素和一个n/2+1位的元素 这样两个元素相减在最坏情况下得到n/2+1 最好情况下小于n/2位
+                //如果分为n/2+2 和n/2 -1 则最坏情况下得到n/2+2 最好情况下 得到n/2+1位
+                //arr[n - 1] * pown/2 + ....
+
+                for (int i = 0; i < n/2; i++) {
+                    num1 += copyarr[n - i - 1] * pow[n / 2 - i - 1];
+                }
+                if (copyarr[0] == 0) {
+                    copyarr[0] = copyarr[1];
+                    copyarr[1] = 0;
+                }
+                for (int i = 0; i < n/2 + 1; i++) {
+                    num2 += copyarr[i] * pow[n/2 - i];
+                }
+                min = num2 - num1;
+            }
+            System.out.println(min);
+        }
+    }
+
+    public static void copyArray(int[] copyarr, int[] arr, int ci, int cj) {
+        int cnt = 0;
+        for (int i = 0; i < n; i++) {
+            if (ci == i) {
+                cnt++;
+                continue;
+            }
+            if (cj == i) {
+                cnt++;
+                continue;
+            }
+            arr[i - cnt] = copyarr[i];
+        }
+    }
+}
