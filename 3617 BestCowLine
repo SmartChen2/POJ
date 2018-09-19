@@ -1,0 +1,52 @@
+package com.company;
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        // write your code here
+
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int i, n;
+        n = sc.nextInt();
+        char[] arr = new char[n];
+       // String str = "";
+        for (i = 0; i < n; i++)
+            arr[i] = sc.next().charAt(0);
+
+        int l, r, cnt;
+        l = 0;
+        r = n - 1;
+        cnt = 0;
+
+        while (l <= r) {
+            for (i = 0; i < r; i++) {
+                if (arr[l + i] < arr[r - i]) {
+                    System.out.print(arr[l]);
+                    l++;
+                    cnt++;
+                    break;
+                }
+                else if (arr[l + i] > arr[r - i]) {
+                    System.out.print(arr[r]);
+                    r--;
+                    cnt++;
+                    break;
+                }
+                else if (r - 2 * i - l < 2){
+                    System.out.print(arr[l]);
+                    l++;
+                    cnt++;
+                    break;
+                }
+            }
+            if (cnt == 80) {
+                cnt = 0;
+                System.out.println();
+            }
+
+        }
+
+    }
+}
