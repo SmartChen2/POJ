@@ -1,0 +1,65 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int C = sc.nextInt(), G = sc.nextInt();
+        int[] carr = new int[C], garr = new int[G];
+        int[] temparr = new int[C];
+
+        for (int i = 0; i < C; i++) {
+            carr[i] = sc.nextInt();
+            if (i > 0)
+                temparr[i] = carr[i] - carr[i - 1];
+        }
+
+        for (int i = 0; i < G; i++)
+            garr[i] = sc.nextInt();
+
+        {//solve
+            final int SIZE = 16000;
+            int[][][] val = new int[2][SIZE][2];//0 is num, 1 is count
+
+            int e = 1;
+            int shift = SIZE/2;
+            //val[e][shift][0] = 1;
+
+            for (int i = 0; i < G; i++) {
+                val[e][shift][0] = 1;
+                e = 1 - e;
+                for (int j = 0; j < SIZE; j++) {
+                    val[e][j][0] = 0;
+                    val[e][j][1] = 0;
+                }
+                for (int j = 0; j < SIZE; j++) {
+                    if (val[1 - e][j][0] == 0) continue;
+                    val[e][j + carr[0] * garr[i]][0] += val[1 - e][j][0];
+                    //val[e][j + carr[0] * garr[i]][1] = val[1 - e][j][0];
+                }
+
+                e = 1 - e;
+                for (int j = 0; j < SIZE; j++) {
+                    val[e][j][0] = 0;
+                    val[e][j][1] = 0;
+                }
+                for (int j = 0; j < SIZE; j++) {
+                    if (val[1 - e][j][0] == 0 && val[e][j][0] == 0) continue;//分三种情况 一 以前的大于0 二 新生成的大于零 三 两个都大于零
+                    val[e][j][0] += val[1 - e][j][0];
+                    if (val[e][j][1] + 1 < C) {
+                        val[e][j + temparr[val[1 - e][j][1] + 1] * garr[i]][0] += val[1 - e][j][0];
+                        if (val[e][j + temparr[val[1 - e][j][1] + 1] * garr[i]][1] == 0)
+                            val[e][j + temparr[val[1 - e][j][1] + 1] * garr[i]][1] = 1;
+                        else
+                            val[e][j + temparr[val[1 - e][j][1] + 1] * garr[i]][1] = Math.min(val[e][j][1] + 1, val[e][j + temparr[val[1 - e][j][1] + 1] * garr[i]][1]);
+                    }
+                    //if (val[1 - e][j][0] > 0)
+                }
+            }
+            System.out.println(val[e][shift][0]);
+        }
+
+    }
+}
