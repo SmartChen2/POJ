@@ -1,0 +1,40 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int C = sc.nextInt(), G = sc.nextInt();
+        int[] carr = new int[C], garr = new int[G];
+
+        for (int i = 0; i < C; i++)
+            carr[i] = sc.nextInt();
+
+        for (int i = 0; i < G; i++)
+            garr[i] = sc.nextInt();
+
+        {//solve
+            final int SIZE = 16000;
+            int[][] val = new int[2][SIZE];//0 is num, 1 is count
+
+            int e = 1;
+            int shift = SIZE/2;
+            val[e][shift] = 1;
+
+            for (int i = 0; i < G; i++) {
+
+                e = 1 - e;
+                for (int j = 0; j < SIZE; j++) {
+                    if (val[1 - e][j] == 0) continue;
+                    for (int k = 0; k < C; k++) {
+                        val[e][j + carr[k] * garr[i]] += val[1 - e][j];
+                    }
+                    val[1 - e][j] = 0;
+                }
+            }
+            System.out.println(val[e][shift]);
+        }
+    }
+}
