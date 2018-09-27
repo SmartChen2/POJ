@@ -1,0 +1,79 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    static String str;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+
+        while (sc.hasNext()) {
+            String str1 = sc.next(), str2 = sc.next();
+            str = "";
+            int l1 = str1.length(), l2 = str2.length();
+            int[][] dp = new int[l1 + 1][l2 + 1];
+            boolean[][] flag = new boolean[l1 + 1][l2 + 1];
+
+            for (int i = 1; i <= l1; i++) {
+                for (int j = 1; j <= l2; j++) {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    if (str1.charAt(i - 1) == str2.charAt(j - 1))
+                        dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - 1] + 1);
+                }
+            }
+            BFS(dp, l1, l2, str2, flag);
+            String st = "", ans = "";
+            for (int i = str.length() - 1; i >= 0; i--) {
+                st += str.charAt(i);
+            }
+            int count = 0;
+
+            for (int i = 0, j = 0;  ; i++, j++) {
+                if (count < str.length()) {
+                    while (str1.charAt(i) != st.charAt(count)) {
+                        ans += str1.charAt(i);
+                        i++;
+                    }
+                    while (str2.charAt(j) != st.charAt(count)) {
+                        ans += str2.charAt(j);
+                        j++;
+                    }
+                    ans += st.charAt(count);
+                    count++;
+                }
+                else {
+                    for (; i < l1; i++) {
+                        ans += str1.charAt(i);
+                    }
+                    for (; j < l2; j++) {
+                        ans += str2.charAt(j);
+                    }
+                    break;
+                }
+            }
+            System.out.println(ans);
+        }
+    }
+    static void BFS(int[][]map, int x, int y, String str2, boolean[][] flag) {
+        if (x < 1 || y < 1)
+            return;
+        if (map[x][y] == 0)
+            return;
+        if (flag[x][y])
+            return;
+        flag[x][y] = true;
+        int xx = x - 1;
+        int yy = y - 1;
+
+        if (map[xx][y] < map[x][y] && map[x][yy] < map[x][y] && map[xx][y] == map[x][yy] && map[x][y] == map[xx][yy] + 1)
+            str += str2.charAt(y - 1);
+
+        if (map[xx][y] == map[x][y]) {//在这里X是向上走
+            BFS(map, xx, y, str2, flag);
+            return;
+        }
+        if (map[x][yy] == map[x][yy])
+            BFS(map, x, yy, str2, flag);
+    }
+}
