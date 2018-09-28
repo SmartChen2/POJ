@@ -1,0 +1,135 @@
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Reader.init( System.in );
+        int N = Reader.nextInt();
+        Node[][] dp = new Node[N][40];
+        for (int i = 0; i < N; i++) {
+            int cnt = Reader.nextInt();
+            for (int j = 0; j < cnt; j++) {
+                dp[i][j] = new Node();
+                dp[i][j].x = Reader.nextInt();
+                dp[i][j].y = Reader.nextInt();
+                if (i == 0)
+                    dp[i][j].l = 0;
+            }
+        }
+
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < 40 && dp[i][j] != null; j++) {
+                for (int k = 0; k < 40 && dp[i - 1][k] != null; k++) {
+                    double ll = (dp[i][j].x - dp[i - 1][k].x) * (dp[i][j].x - dp[i - 1][k].x) + (dp[i][j].y - dp[i - 1][k].y) * (dp[i][j].y - dp[i - 1][k].y);
+                    ll = Math.sqrt(ll);
+                    dp[i][j].l = Math.min(dp[i][j].l, ll + dp[i - 1][k].l);
+                }
+            }
+        }
+        double ans = Integer.MAX_VALUE;
+        for (int j = 0; j < 40 && dp[0][j] != null; j++) {
+            for (int k = 0; k < 40 && dp[N - 1][k] != null; k++) {
+                double ll = (dp[0][j].x - dp[N - 1][k].x) * (dp[0][j].x - dp[N - 1][k].x) + (dp[0][j].y - dp[N - 1][k].y) * (dp[0][j].y - dp[N - 1][k].y);
+                ll = Math.sqrt(ll);
+                ans = Math.min(ans, ll + dp[N - 1][k].l);
+            }
+        }
+        ans *= 100;
+        System.out.println((int)ans);
+    }
+}
+
+class Node{
+    int x, y;
+    double l;
+    Node(){
+        l = Integer.MAX_VALUE;
+    }
+}
+
+class Reader {
+    static BufferedReader reader;
+    static StringTokenizer tokenizer;
+
+    /** call this method to initialize reader for InputStream */
+    static void init(InputStream input) {
+        reader = new BufferedReader(
+                new InputStreamReader(input) );
+        tokenizer = new StringTokenizer("");
+    }
+    /** get next word */
+    static String next() throws IOException {
+        while ( ! tokenizer.hasMoreTokens() ) {
+            //TODO add check for eof if necessary
+            tokenizer = new StringTokenizer(
+                    reader.readLine() );
+        }
+        return tokenizer.nextToken();
+    }
+    static int nextInt() throws IOException {
+        return Integer.parseInt( next() );
+    }
+}
+
+
+
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+
+const int MAXN = (100 + 10);
+const double inf = 1e17;
+
+
+int main()
+{
+	int N;
+	
+	while (cin >> N) {
+		double dp[MAXN][40];
+		int map[MAXN][41][2];
+		for (int i = 0; i < N; i++) {
+			scanf("%d", &map[i][40][0]);
+			for (int j = 0; j < map[i][40][0]; j++) {
+				scanf("%d", &map[i][j][0]);
+				scanf("%d", &map[i][j][1]);
+				if (i == 0)
+					dp[i][j] = 0;
+				else
+					dp[i][j] = inf;
+			}
+		}
+		for (int i = 1; i < N; i++) {
+			for (int j = 0; j < map[i][40][0]; j++) {
+				for (int k = 0; k < map[i - 1][40][0]; k++) {
+					double ll = (map[i][j][0] - map[i - 1][k][0]) * (map[i][j][0] - map[i - 1][k][0])
+						+ (map[i][j][1] - map[i - 1][k][1]) * (map[i][j][1] - map[i - 1][k][1]);
+					ll = sqrt(ll);
+					dp[i][j] = min(dp[i][j], ll + dp[i - 1][k]);
+				}
+			}
+		}
+
+		double ans = inf;
+		for (int j = 0; j < map[0][40][0]; j++) {
+			for (int k = 0; k < map[N - 1][40][0]; k++) {
+				double ll = (map[0][j][0] - map[N - 1][k][0]) * (map[0][j][0] - map[N - 1][k][0])
+					+ (map[0][j][1] - map[N - 1][k][1]) * (map[0][j][1] - map[N - 1][k][1]);
+				ll = sqrt(ll);
+				ans = min(ans, ll + dp[N - 1][k]);
+			}
+		}
+		cout << (int)(ans * 100) << endl;
+	}
+	return 0;
+}
