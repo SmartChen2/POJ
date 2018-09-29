@@ -1,0 +1,72 @@
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Reader.init( System.in );
+        int N = Reader.nextInt();
+        int[][] arr = new int[N][N];
+        int[][] sumarr = new int[N][N];
+        int[][][] dp = new int[N][N][N];
+        int ans = Integer.MIN_VALUE + 100000;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                arr[i][j] = Reader.nextInt();
+            }
+        }
+        for (int i = 0; i < N; i++) {
+            sumarr[i][0] = arr[i][0];
+            for (int j = 1; j < N; j++) {
+                sumarr[i][j] = sumarr[i][j - 1] + arr[i][j];
+            }
+        }
+        //dp[i][j][k] stand for the ith row of arr, the som of jth element to kth element.
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                for (int k = 0; k < N; k++) {
+                    dp[i][j][k] = sumarr[i][k] - sumarr[i][j] + arr[i][j];
+                    ans = Math.max(ans, dp[i][j][k]);
+                }
+            }
+        }
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                for (int k = j; k < N; k++) {
+                    dp[i][j][k] += Math.max(0, dp[i - 1][j][k]);//zero means dp[i - 1][j][k] has no contribution, stand for remaining the value it is.
+                    ans = Math.max(ans, dp[i][j][k]);
+                }
+            }
+        }
+        System.out.println(ans);
+    }
+}
+
+
+class Reader {
+    static BufferedReader reader;
+    static StringTokenizer tokenizer;
+
+    /** call this method to initialize reader for InputStream */
+    static void init(InputStream input) {
+        reader = new BufferedReader(
+                new InputStreamReader(input) );
+        tokenizer = new StringTokenizer("");
+    }
+    /** get next word */
+    static String next() throws IOException {
+        while ( ! tokenizer.hasMoreTokens() ) {
+            //TODO add check for eof if necessary
+            tokenizer = new StringTokenizer(
+                    reader.readLine() );
+        }
+        return tokenizer.nextToken();
+    }
+    static int nextInt() throws IOException {
+        return Integer.parseInt( next() );
+    }
+}
