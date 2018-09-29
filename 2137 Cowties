@@ -1,0 +1,95 @@
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Reader.init( System.in );
+        int N = Reader.nextInt();
+        Node[][] dp = new Node[N][40];
+        int s1 = 0;
+        for (int i = 0; i < N; i++) {
+            int cnt = Reader.nextInt();
+            if (i == 0)
+                s1 = cnt;
+            for (int j = 0; j < cnt; j++) {
+                dp[i][j] = new Node();
+                dp[i][j].x = Reader.nextInt();
+                dp[i][j].y = Reader.nextInt();
+                if (i == 0)
+                    dp[i][j].l = 0;
+            }
+        }
+        double ans = Integer.MAX_VALUE;
+
+        //deal with 1st
+        for (int c = 0; c < s1; c++) {
+            //init
+            for (int i = 2; i < N; i++) {
+                for (int j = 0; j < 40 && dp[i][j] != null; j++) {
+                    dp[i][j].l = Integer.MAX_VALUE;
+                }
+            }
+
+            //deal with 2nd
+            for (int j = 0; j < 40 && dp[1][j] != null; j++) {
+                double ll = (dp[0][c].x - dp[1][j].x) * (dp[0][c].x - dp[1][j].x) + (dp[0][c].y - dp[1][j].y) * (dp[0][c].y - dp[1][j].y);
+                ll = Math.sqrt(ll);
+                dp[1][j].l = ll;
+            }
+            //deal with 2nd  N -1
+            for (int i = 2; i < N; i++) {
+                for (int j = 0; j < 40 && dp[i][j] != null; j++) {
+                    for (int k = 0; k < 40 && dp[i - 1][k] != null; k++) {
+                        double ll = (dp[i][j].x - dp[i - 1][k].x) * (dp[i][j].x - dp[i - 1][k].x) + (dp[i][j].y - dp[i - 1][k].y) * (dp[i][j].y - dp[i - 1][k].y);
+                        ll = Math.sqrt(ll);
+                        dp[i][j].l = Math.min(dp[i][j].l, ll + dp[i - 1][k].l);
+                    }
+                }
+            }
+            //deal with N
+            for (int j = 0; j < 40 && dp[N - 1][j] != null; j++) {
+                double ll = (dp[0][c].x - dp[N - 1][j].x) * (dp[0][c].x - dp[N -1][j].x) + (dp[0][c].y - dp[N - 1][j].y) * (dp[0][c].y - dp[N - 1][j].y);
+                ll = Math.sqrt(ll);
+                ans = Math.min(ans, dp[N - 1][j].l + ll);
+            }
+
+        }
+        ans *= 100;
+        System.out.println((int)ans);
+
+    }
+}
+
+class Node{
+    int x, y;
+    double l;
+}
+
+class Reader {
+    static BufferedReader reader;
+    static StringTokenizer tokenizer;
+
+    /** call this method to initialize reader for InputStream */
+    static void init(InputStream input) {
+        reader = new BufferedReader(
+                new InputStreamReader(input) );
+        tokenizer = new StringTokenizer("");
+    }
+    /** get next word */
+    static String next() throws IOException {
+        while ( ! tokenizer.hasMoreTokens() ) {
+            //TODO add check for eof if necessary
+            tokenizer = new StringTokenizer(
+                    reader.readLine() );
+        }
+        return tokenizer.nextToken();
+    }
+    static int nextInt() throws IOException {
+        return Integer.parseInt( next() );
+    }
+}
