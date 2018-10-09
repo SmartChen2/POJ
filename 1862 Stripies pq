@@ -1,0 +1,37 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.text.DecimalFormat;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        DecimalFormat df = new DecimalFormat("0.000");
+        PriorityQueue<Double> pq = new PriorityQueue<Double>(110, new Comparator<Double>() {
+            @Override
+            public int compare(Double o1, Double o2) {
+                if (o2 > o1)
+                    return 1;
+                if (o2 < o1)
+                    return -1;
+                return 0;
+            }
+        });
+        int N = sc.nextInt();
+        for (int i = 0; i < N; i++) {
+            double temp = sc.nextInt();
+            pq.add(temp);
+        }
+        for (int i = 0; i < N - 1; i++) {
+            double x = pq.poll();
+            double y = pq.poll();
+            double temp = 2 * Math.sqrt(x * y);
+            pq.add(temp);
+        }
+        System.out.println(df.format(pq.poll()));
+    }
+}
