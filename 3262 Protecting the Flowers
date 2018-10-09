@@ -1,0 +1,46 @@
+
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+
+        int N = sc.nextInt();
+        Node[] arr = new Node[N];
+        int dmg = 0;
+        for (int i = 0; i < N; i++) {
+            arr[i] = new Node();
+            arr[i].a = sc.nextInt();
+            arr[i].b = sc.nextInt();
+            dmg += arr[i].b;
+            arr[i].pct = (double)arr[i].b/arr[i].a;
+        }
+        Arrays.sort(arr, new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                if (o1.pct == o2.pct) {
+                    return o1.a - o2.a;
+                }
+                else if (o2.pct - o1.pct > 0)
+                    return 1;
+                else
+                    return -1;
+            }
+        });
+        long ans = 0;
+        for (int i = 0; i < N - 1; i++) {
+            dmg -= arr[i].b;
+            ans += arr[i].a * dmg * 2;
+        }
+        System.out.println(ans);
+    }
+}
+
+class Node {
+    int a, b;
+    double pct = 0;
+}
