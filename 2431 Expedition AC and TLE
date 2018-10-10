@@ -1,0 +1,199 @@
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+
+        Reader.init(System.in);
+        int N = Reader.nextInt();
+        int[][] arr = new int[N + 1][2];
+        for (int i = 0; i < N; i++) {
+            arr[i][0] = Reader.nextInt();
+            arr[i][1] = Reader.nextInt();
+        }
+        int L = Reader.nextInt();
+        int P = Reader.nextInt();
+        arr[N][0] = 0;
+        arr[N][1] = 0;
+        Arrays.sort(arr, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o2[0] - o1[0];
+        }});
+
+        PriorityQueue < Integer > pq = new PriorityQueue<Integer>(10010, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        });
+
+        int pos = L - P;
+        boolean outflag = false;
+        int ans = 0;
+
+        for (int i = 0; i <= N; i++) {
+            while (pos > arr[i][0]) {
+                if (pq.isEmpty()) {
+                    System.out.println(-1);
+                    return;
+                }
+                ans++;
+                pos -= pq.poll();
+            }
+            pq.add(arr[i][1]);
+        }
+        System.out.println(ans);
+    }
+}
+
+class Reader {
+    static BufferedReader reader;
+    static StringTokenizer tokenizer;
+
+    /** call this method to initialize reader for InputStream */
+    static void init(InputStream input) {
+        reader = new BufferedReader(
+                new InputStreamReader(input) );
+        tokenizer = new StringTokenizer("");
+    }
+
+    /** get next word */
+    static String next() throws IOException {
+        while ( ! tokenizer.hasMoreTokens() ) {
+            //TODO add check for eof if necessary
+            tokenizer = new StringTokenizer(
+                    reader.readLine() );
+        }
+        return tokenizer.nextToken();
+    }
+    static int nextInt() throws IOException {
+        return Integer.parseInt( next() );
+    }
+}
+
+
+
+
+
+
+
+
+TLE CODE:
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+
+        Reader.init(System.in);
+        int N = Reader.nextInt();
+        Node[] arr = new Node[N];
+        for (int i = 0; i < N; i++) {
+            arr[i] = new Node();
+            arr[i].pos = Reader.nextInt();
+            arr[i].val = Reader.nextInt();
+
+        }
+        Arrays.sort(arr, new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                return o2.pos - o1.pos;
+            }
+        });
+        PriorityQueue<Node> pq = new PriorityQueue<Node>(10010, new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                return o2.val - o1.val;
+            }
+        });
+        int L = Reader.nextInt();
+        int P = Reader.nextInt();
+        int cur = 0, pos = L - P;
+        boolean outflag = false;
+        Node node;
+        int i = 0;
+        int ans = 0;
+        while (pos > 0 && cur < N - 1) {
+            for (i = cur; i < arr.length; i++) {
+                if (pos > arr[i].pos && i == cur) {//到不了下一个
+                    outflag = true;
+                    break;
+                }
+                if (pos <= arr[i].pos)
+                    pq.add(arr[i]);
+                else
+                    break;
+            }
+            cur = i;
+            while (pos > arr[cur].pos) {//while直到它能到下一个
+                node = pq.poll();
+                if (node == null) {
+                    outflag = true;
+                    break;
+                }
+                pos -= node.val;
+                ans++;
+            }
+        }
+        if (!outflag) {
+            while (pos > 0) {
+                node = pq.poll();
+                if (node == null) {
+                    outflag = true;
+                    break;
+                }
+                pos -= node.val;
+                ans++;
+            }
+        }
+        if (outflag) {
+            System.out.println(-1);
+        }
+        else
+            System.out.println(ans);
+    }
+}
+class Node{
+    int pos, val;
+}
+class Reader {
+    static BufferedReader reader;
+    static StringTokenizer tokenizer;
+
+    /** call this method to initialize reader for InputStream */
+    static void init(InputStream input) {
+        reader = new BufferedReader(
+                new InputStreamReader(input) );
+        tokenizer = new StringTokenizer("");
+    }
+
+    /** get next word */
+    static String next() throws IOException {
+        while ( ! tokenizer.hasMoreTokens() ) {
+            //TODO add check for eof if necessary
+            tokenizer = new StringTokenizer(
+                    reader.readLine() );
+        }
+        return tokenizer.nextToken();
+    }
+    static int nextInt() throws IOException {
+        return Integer.parseInt( next() );
+    }
+}
