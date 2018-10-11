@@ -1,0 +1,104 @@
+package com.company;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Reader.init(System.in);
+        int N = Reader.nextInt();
+        int C = Reader.nextInt();
+        int F = Reader.nextInt();
+        int[][] arr = new int[C][2];
+
+        for (int i = 0; i < C; i++) {
+            for (int j = 0; j < 2; j++) {
+                arr[i][j] = Reader.nextInt();
+            }
+        }
+        //sort according grade
+        Arrays.sort(arr, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[0] - o2[0];
+            }
+        });
+
+        PriorityQueue<Integer> pq = new PriorityQueue<Integer>(200, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        });
+        int LMINSUM = 0, RMINSUM = 0;
+
+        int[] LCOST = new int[C];
+        for (int i = 0; i < N/2; i++) {
+            pq.add(arr[i][1]);
+            LMINSUM += arr[i][1];
+        }
+        for (int i = N/2; i < C - N/2; i++) {
+            LCOST[i] = LMINSUM;
+            int t = pq.peek();
+            if (t > arr[i][1]) {
+                pq.poll();
+                pq.add(arr[i][1]);
+                LMINSUM = LMINSUM - t + arr[i][1];
+            }
+        }
+
+        int[] RCOST = new int[C];
+        pq.clear();
+        for (int i = C - N/2; i < C; i++) {
+            pq.add(arr[i][1]);
+            RMINSUM += arr[i][1];
+        }
+        for (int i = C - N/2 - 1; i >= N/2; i--) {
+            RCOST[i] = RMINSUM;
+            int t = pq.peek();
+            if (t > arr[i][1]) {
+                pq.poll();
+                pq.add(arr[i][1]);
+                RMINSUM = RMINSUM - t + arr[i][1];
+            }
+        }
+
+        for (int i = C - N/2 - 1; i >= N/2; i--) {
+            if (LCOST[i] + RCOST[i] + arr[i][1] <= F) {
+                System.out.println(arr[i][0]);
+                return;
+            }
+        }
+        System.out.println(-1);
+    }
+}
+class Reader {
+    static BufferedReader reader;
+    static StringTokenizer tokenizer;
+
+    /** call this method to initialize reader for InputStream */
+    static void init(InputStream input) {
+        reader = new BufferedReader(
+                new InputStreamReader(input) );
+        tokenizer = new StringTokenizer("");
+    }
+
+    /** get next word */
+    static String next() throws IOException {
+        while ( ! tokenizer.hasMoreTokens() ) {
+            //TODO add check for eof if necessary
+            tokenizer = new StringTokenizer(
+                    reader.readLine() );
+        }
+        return tokenizer.nextToken();
+    }
+    static int nextInt() throws IOException {
+        return Integer.parseInt( next() );
+    }
+}
