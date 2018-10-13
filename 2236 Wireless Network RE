@@ -1,0 +1,72 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+
+public class Main {
+    static int[][] arr;
+    static int[] par;
+
+    public static void main(String[] args) {
+        Scanner Reader = new Scanner(new BufferedInputStream(System.in));
+        int N = Reader.nextInt();
+        double d = Reader.nextInt();
+        d = d * d;
+        arr = new int[N + 1][3];
+        par = new int[N + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 0; j < 2; j++) {
+                arr[i][j] = Reader.nextInt();
+            }
+        }
+
+        for (int i = 0; i < par.length; i++) {
+            par[i] = -1;
+        }
+        while (Reader.hasNext()) {
+            char c = Reader.next().charAt(0);
+            //combine
+            if (c == 'O') {
+                int e = Reader.nextInt();
+                par[e] = e;
+                for (int i = 1; i <= N; i++) {
+                    if(par[i] == par[e])
+                        continue;
+                    if (par[i] >= 0) {
+                        double dis = (arr[e][0] - arr[i][0]) * (arr[e][0] - arr[i][0]) + (arr[e][1] - arr[i][1]) * (arr[e][1] - arr[i][1]);
+                        if (dis > d) continue;
+                        unite(i, e);
+                    }
+                }
+            }
+            //search
+            else {
+                int x = Reader.nextInt();
+                int y = Reader.nextInt();
+                int px = find(x);
+                int py = find(y);
+                if (px == py)
+                    System.out.println("SUCCESS");
+                else
+                    System.out.println("FAIL");
+            }
+        }
+    }
+
+    public static int find(int x) {
+        if (par[x] == x) {
+            return x;
+        }
+        return find(par[x]);
+    }
+    public static void unite(int x, int y) {
+        x = find(x);
+        y = find(y);
+
+        if (x < y)
+            par[y] = x;
+        if (y < x)
+            par[x] = y;
+    }
+}
