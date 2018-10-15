@@ -1,0 +1,67 @@
+#include <stdio.h>
+#define MAXN 200100
+int par[MAXN];
+int rank[MAXN];
+
+int find(int te)
+{
+	if (te == par[te])
+		return te;
+	return find(par[te]);
+}
+void unite(int x, int y)
+{
+	x = find(x);
+	y = find(y);
+	if (rank[x] > rank[y])
+		par[y] = x;
+	else
+	{
+		par[x] = y;
+		if (rank[x] == rank[y])
+			rank[y]++;
+	}
+}
+bool same(int x, int y)
+{
+	return find(x) == find(y);
+}
+
+int main(void)
+{
+	int T, N, M, a, b;
+	char op[3];
+	scanf("%d", &T);
+	
+	while (T--)
+	{
+		int i = 0;
+		scanf("%d%d", &N, &M);
+		for (i = 0; i < N * 2; i++)
+		{
+			par[i] = i;
+			rank[i] = 0;
+		}
+
+		while (M--)
+		{
+			scanf("%s %d %d", op, &a, &b);
+			if (op[0] == 'A')
+			{
+				if (same(a, b) || same(a + N, b + N))
+					printf("In the same gang.\n");
+				else if (same(a, b + N) || same(b, a + N))
+					printf("In different gangs.\n");
+				else
+					printf("Not sure yet.\n");
+			}
+			else
+			{
+				//a differs from b, same as b + N
+				unite(a, b + N);
+				unite(b, a + N);
+			}
+		}
+	}
+	
+}
