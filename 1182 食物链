@@ -1,0 +1,203 @@
+#include <stdio.h>
+#define MAXN 150010
+int par[MAXN], rank[MAXN];
+
+int find(int x)
+{
+	if (x == par[x])
+		return x;
+	return find(par[x]);
+}
+void unite(int x, int y)
+{
+	x = find(x);
+	y = find(y);
+	if (x == y) return;
+	if (rank[x] < rank[y])
+		par[x] = y;
+	else
+	{
+		par[y] = x;
+		if (rank[x] == rank[y]) 
+			rank[x]++;
+	}
+}
+
+bool same(int x, int y)
+{
+	return find(x) == find(y);
+}
+
+int main(void)
+{
+	int N, K, T, X, Y;
+	scanf("%d%d", &N, &K);
+	int ans = 0;
+	int N2 = 2 * N;
+	for (int i = 0; i < 3 * N; i++)
+	{
+		par[i] = i;
+		rank[i] = 0;
+	}
+	while (K--)
+	{
+		scanf("%d%d%d", &T, &X, &Y);
+	
+		if (X > N || Y > N)
+		{
+			ans++;
+			continue;
+		}
+		X -= 1;
+		Y -= 1;
+		if (T == 1)
+		{
+			if (same(X, Y + N) || same(X, Y + N2))
+			{
+				ans++;
+				continue;
+			}
+			unite(X, Y);
+			unite(X + N, Y + N);
+			unite(X + N2, Y + N2);
+			continue;
+		}
+		//X EAT Y
+		//Y + N eat X
+		//Y + N2 is same as X;
+
+		
+		if (same(X, Y) || same(X, Y + N))
+		{
+			ans++;
+			continue;
+		}
+		//X EAT X + N, SAME AS Y
+		//X + N2 EAT X
+		unite(X, Y + N2);
+		unite(X + N, Y);
+		unite(X + N2, Y + N);
+	}
+	printf("%d", ans);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//failed code
+package com.company;
+
+import java.io.IOException;
+
+public class Main {
+    static int[][] arr;
+    static int[][] par;
+
+    public Main() {
+    }
+
+    public static void main(String[] args) throws IOException {
+        Reader.init(System.in);
+        int N = Reader.nextInt();
+        int K = Reader.nextInt();
+        int ans = 0;
+        par = new int[N + 1][3];
+        boolean[] flag = new boolean[N + 1];
+
+        int T;
+        for(T = 0; T <= N; par[T][0] = T++) {
+            ;
+        }
+
+        while(true) {
+            while(true) {
+                while(true) {
+                    while(K > 0) {
+                        --K;
+                        T = Reader.nextInt();
+                        int X = Reader.nextInt();
+                        int Y = Reader.nextInt();
+                        if (X <= N && Y <= N) {
+                            int px = find(X);
+                            int py = find(Y);
+                            if (T == 1) {
+                                if (flag[X] && flag[Y] && (par[px][0] == par[par[py][2]][0] || par[px][0] == par[par[py][1]][0])) {
+                                    ++ans;
+                                } else {
+                                    union(par[px][0], par[py][0]);
+                                    union(par[par[px][1]][0], par[par[py][1]][0]);
+                                    union(par[par[px][2]][0], par[par[py][2]][0]);
+                                    flag[X] = true;
+                                    flag[Y] = true;
+                                }
+                            } else if (px == py) {
+                                ++ans;
+                            } else {
+                                if (flag[X] && flag[Y]) {
+                                    if (par[px][1] == par[py][0] || par[par[px][2]][2] == par[py][0]) {
+                                        ++ans;
+                                        continue;
+                                    }
+                                } else {
+                                    flag[X] = true;
+                                    flag[Y] = true;
+                                    par[py][1] = par[px][0];
+                                }
+
+                                if (par[px][2] == 0) {
+                                    par[px][2] = par[py][0];
+                                } else {
+                                    union(par[px][2], par[py][0]);
+                                }
+
+                                if (par[py][1] == 0) {
+                                    par[py][1] = par[px][0];
+                                } else {
+                                    union(par[py][1], par[px][0]);
+                                }
+
+                                if (par[py][2] == 0) {
+                                    par[py][2] = par[par[px][1]][0];
+                                } else {
+                                    union(par[py][2], par[par[px][1]][0]);
+                                }
+
+                                if (par[px][1] != 0) {
+                                    if (par[par[px][1]][1] == 0) {
+                                        par[par[px][1]][1] = par[py][0];
+                                    } else {
+                                        union(par[par[px][1]][1], par[py][0]);
+                                    }
+                                }
+                            }
+                        } else {
+                            ++ans;
+                        }
+                    }
+
+                    System.out.println(ans);
+                    return;
+                }
+            }
+        }
+    }
+
+    public static int find(int x) {
+        return x == par[x][0] ? x : find(par[x][0]);
+    }
+
+    public static void union(int x, int y) {
+        x = find(x);
+        y = find(y);
+        par[x][0] = y;
+    }
+}
