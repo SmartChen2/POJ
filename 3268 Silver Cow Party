@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <cstdio>
+#include <cstring>
+
+#define INF 1e9
+#define MAXN 1000
+#define MAXM 100000
+using namespace std;
+
+int i, j, N, M, X;
+struct edge {
+	int to, cost;
+};
+typedef pair<int, int> P;//first is distance, second is id.
+
+vector<edge> G[MAXM];
+
+//arr is uesd to store distance
+void Dijkstra(int s, int darr[]) {
+	priority_queue<P,vector<P>,greater<P> > pq;
+	pq.push(P(0, s));
+	while (!pq.empty()) {
+		P tp = pq.top();
+		pq.pop();
+		int dis = tp.first;
+		int id = tp.second;
+	 	
+		for (i = 0; i < G[id].size(); i++) {
+			int nd = G[id][i].cost;
+			int to = G[id][i].to;
+			if (darr[to] > nd + dis) {
+				darr[to] = nd + dis;
+				pq.push(P(darr[to], to));
+			}
+		}
+	}
+}
+int main() {
+	scanf("%d %d %d", &N, &M, &X);
+	int A;
+	int d[MAXN];
+	int d2[MAXN];
+	int tempd[MAXN];
+	
+	for (i = 0; i < M; i++) {
+		edge edg;
+		scanf("%d %d %d", &A, &edg.to, &edg.cost);
+		A -= 1;
+		edg.to -= 1;
+		G[A].push_back(edg);
+	}
+	X -= 1;
+	d2[X] = 0;
+	
+	fill(d, d + N, INF);
+	d[X] = 0;
+	Dijkstra(X, d);
+	
+	for (j = 0; j < N; j++) {
+		if (j == X) continue;
+		fill(tempd, tempd + N, INF);
+		tempd[j] = 0;
+		Dijkstra(j, tempd);
+		d2[j] = tempd[X];
+	}
+	
+	int ans = 0;
+	for (i = 0; i < N; i++) {
+		if (ans < d[i] + d2[i])
+			ans = d[i] + d2[i];
+	}
+	printf("%d", ans);
+	return 0;
+}
