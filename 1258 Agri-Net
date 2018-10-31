@@ -1,0 +1,61 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        while (sc.hasNext()) {
+            int N = sc.nextInt();
+            int[][] cost = new int[N][N];
+            int[] d = new int[N];
+            boolean[] used = new boolean[N];
+            final int INF = Integer.MAX_VALUE/3;
+            for (int i = 0; i < cost.length; i++) {
+                d[i] = INF;
+                for (int j = 0; j < cost.length; j++) {
+                    cost[i][j] = sc.nextInt();
+                }
+            }
+            d[0] = 0;
+            //prim
+            {
+                PriorityQueue<Node>  pq = new PriorityQueue<Node>(100, new Comparator<Node>() {
+                    @Override
+                    public int compare(Node o1, Node o2) {
+                        return o1.dis - o2.dis;
+                    }
+                });
+                Node n = new Node(0, 0);
+                pq.add(n);
+                int res = 0;
+                while (!pq.isEmpty()) {
+                    Node tn = pq.poll();
+                    if (d[tn.id] < tn.dis) continue;
+                    if (used[tn.id]) continue;
+                    res += tn.dis;
+                    used[tn.id] = true;
+                    for (int i = 0; i < N; i++) {
+                        if (i == tn.id) continue;
+                        if (d[i] > cost[tn.id][i]) {
+                            d[i] = cost[tn.id][i];
+                            n = new Node(d[i], i);
+                            pq.add(n);
+                        }
+                    }
+                }
+                System.out.println(res);
+            }
+        }
+    }
+}
+class Node {
+    int dis, id;
+    Node (int a, int b) {
+        this.dis = a;
+        this.id = b;
+    }
+}
