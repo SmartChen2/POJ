@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <iostream>
+using namespace std;
+
+#define INF 1e9
+#define MAXN 1024
+#define MAXM 10024
+int d[MAXN];
+int AL[MAXM], BL[MAXM], DL[MAXM];
+int AD[MAXM], BD[MAXM], DD[MAXM];
+int i, j, N, ML, MD;
+bool updated;
+
+void update(int& x, int y) {
+	if (x > y) {
+		updated = true;
+		x = y;
+	}
+}
+void bellmanford() {
+	for (i = 0; i <= N; i++) {
+		updated = false;
+		//three inequations
+		//d[j + 1] + 0 >= d[j];  d[j] - d[j + 1] <= 0
+		for (j = 0; j + 1 < N; j++) {
+			if (d[j + 1] < INF)
+				update(d[j], d[j + 1]);
+		}
+		//d[BL] - d[AL] <= DL
+		for (j = 0; j < ML; j++) {
+			if (d[AL[j] - 1] < INF)
+				update(d[BL[j] - 1], d[AL[j] - 1] + DL[j]);
+		}
+		//BD > AD
+		//d[AD] - d[BD] <= -DD
+		for (j = 0; j < MD; j++) {
+			if (d[BD[j] - 1] < INF)
+				update(d[AD[j] - 1], d[BD[j] - 1] - DD[j]);
+		}
+	}
+}
+
+int main() {
+	scanf("%d %d %d", &N, &ML, &MD);
+	for (i = 0; i < ML; i++) {
+		scanf("%d %d %d", &AL[i], &BL[i], &DL[i]);
+	}
+	for (i = 0; i < MD; i++) {
+		scanf("%d %d %d", &AD[i], &BD[i], &DD[i]);
+	}
+	fill(d, d + N, 0);
+	//find negative loop
+	bellmanford(); 
+	if (updated) {
+		printf("-1");
+		return 0;
+	}
+	
+	fill(d, d + N, INF);
+	d[0] = 0;
+	bellmanford();
+	int ans = d[N - 1];
+	//remained infinite value means the node is unreachable, the initial value of all node is INF. 
+	if (ans == INF)
+		ans = -2;
+	printf("%d", ans);
+	return 0;
+}
