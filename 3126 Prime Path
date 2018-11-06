@@ -1,0 +1,69 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        int t = sc.nextInt();
+        final int SIZE = 10010;
+        boolean[] isnotprime = new boolean[SIZE];
+        //compute the prime in the range
+        for (int i = 2; i < isnotprime.length; i++) {
+            if (!isnotprime[i]) {
+                for (int j = i + i; j < isnotprime.length; j += i) {
+                    isnotprime[j] = true;
+                }
+            }
+        }
+        while(t-- > 0) {
+            int a = sc.nextInt();
+            int b = sc.nextInt();
+            if (a > b) {
+                int temp = a;
+                a = b;
+                b = temp;
+            }
+
+            final int INF = Integer.MAX_VALUE / 3;
+
+            int[] val = new int[SIZE];
+            for (int i = 0; i < SIZE; i++) {
+                val[i] = INF;
+            }
+
+            //Queue<Node> pq = new LinkedList<Node>();
+            PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
+            pq.clear();
+            pq.add(a);
+            val[a] = 0;
+            int[] multi = new int[]{1000, 100, 10, 1};
+            int[] num = new int[4];
+            while (!pq.isEmpty()) {
+                int n = pq.poll();
+                int tem = n % 1000;
+                num[0] = tem;
+                int tem2 = tem % 100;
+                num[1] = n - tem + tem2;
+                int tem3 = tem2 % 10;
+                num[2] = n - tem2 + tem3;
+                num[3] = n - tem3;
+
+                for (int i = 3; i >= 0; i--) {
+                    for (int j = 0; j < 10; j++) {
+                        int pos = num[i] + j * multi[i];
+                        if (pos <= 1000 || pos == n) continue;
+                        if (!isnotprime[pos]) {// is prime
+                            if (val[pos] > val[n] + 1) {
+                                pq.add(pos);
+                                val[pos] = val[n] + 1;
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(val[b]);
+        }
+    }
+}
