@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <iostream>
+#include <climits>
+#include <algorithm>
+#define SIZE 1000010
+
+using namespace std;
+typedef long long ll;
+int i;
+bool is_prime[SIZE]; 
+bool is_prime_small[SIZE];
+
+void segment_sieve(ll a, ll b) {
+	
+	long long j;
+	for(i = 0; (ll)i * i < b; i++) {//0 to sqrt(b)
+		is_prime_small[i] = true;
+	}
+	for(i = 0; i < b - a; i++) {
+		is_prime[i] = true;
+	}
+	
+	for(i = 2; (ll)i * i < b; i++)  {
+		if (is_prime_small[i]) {
+			//seive 2 to sqrt(b)
+			for (j = 2 * i; (ll)j * j < b; j += i) 
+				is_prime_small[j] = false;
+			
+			//seive a to sqrt(b)
+			//init simillar to j = a / i * (i + i), but it needs to judge if a%i == 0;
+			//2LL means 2, j is bigger than 2.
+			for (j = max(2LL, (a + i - 1) / i) * i; j < b; j += i)
+				is_prime[j - a] = false;
+		}
+	}
+}
+int main() {
+	long long a, b;
+	//[a, b)
+	//printf("%lld", LONG_MAX);
+	scanf("%lld %lld", &a, &b);
+	//22 37 ans = 3
+	//22801763489 22801787297 ans = 1000
+	segment_sieve(a, b);
+	int ans = 0;
+	for(i = 0; i < b - a; i++)  {
+		if (is_prime[i])
+			ans++;
+	}
+	printf("%d\n", ans);
+	
+	return 0;
+}
+
