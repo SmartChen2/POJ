@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <iostream>
+
+#define MAXH 1000011
+
+using namespace std;
+
+bool issemi[MAXH];
+bool ishprime[MAXH];
+int hprime[MAXH];
+int seminum[MAXH];
+int i, j, h, sum;
+
+int main() {
+	sum = 0;
+	//format
+	fill(ishprime, ishprime + MAXH, true);
+	fill(issemi, issemi + MAXH, false);
+
+	for (i = 1; 4 * i + 1 < MAXH; i++) {
+		int t = 4 * i + 1;
+		if (ishprime[t]) {
+			hprime[sum++] = t;
+			for (j = t + t; j < MAXH; j += t) {
+				ishprime[j] = false;
+			}
+		}
+	}
+	
+	for (i = 0; hprime[i] * hprime[i] < MAXH; i++) {
+		for (j = i; j < sum; j++) {
+			long pos = hprime[i] * hprime[j];
+			if (pos >= MAXH) break;
+			issemi[pos] = true;
+		}
+	}
+	int cnt = 0;
+
+	for (i = 0; i < MAXH; i++) {
+		if (issemi[i]) {
+			cnt++;
+		}
+		seminum[i] = cnt;
+	}
+
+	
+	while (1) {
+		scanf("%d", &h);
+		if (h == 0) break;
+		printf("%d %d\n", h, seminum[h]);
+	}
+	return 0;
+}
