@@ -1,0 +1,38 @@
+#include <iostream>
+#include <stdio.h>
+#include <algorithm>
+
+const int MAXN = 100001;
+using namespace std;
+int arr[MAXN];
+int i, j, N, COW;
+
+bool C(int d) {
+	int lastpos = 0;
+	int cnum = 1;
+	for(j = 1; j < N && cnum < COW; j++) {
+		if (arr[j] - arr[lastpos] < d) continue;
+		lastpos = j;
+		cnum++;
+	}
+	return cnum == COW;
+}
+int main()
+{
+	scanf("%d %d", &N, &COW);
+	for (i = 0; i < N; i++) {
+		scanf("%d", &arr[i]);
+	}
+	sort(arr, arr + N);
+	
+	int l = 0, r = 1000001000, mid;
+	while (l < r - 1) {
+		mid = (l + r) / 2;
+		if (C(mid))
+			l = mid;
+		else
+			r = mid;
+	}
+	printf("%d", l);
+    return 0;
+}
