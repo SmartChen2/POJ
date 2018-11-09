@@ -1,0 +1,37 @@
+#include <iostream>
+#include <stdio.h>
+#include <math.h>
+
+const int MAXN = 10001;
+using namespace std;
+double arr[MAXN];
+int i, j, N, K;
+
+bool C(double mid) {
+	long long sum = 0;
+	for (j = 0; j < N; j++) {
+		sum += (int)(arr[j] / mid);
+	}
+	return sum >= K;
+}
+
+int main()
+{
+	scanf("%d %d", &N, &K);
+	for (i = 0; i < N; i++) {
+		scanf("%lf", &arr[i]);
+	}
+	double l = 0, r = 100010, mid;
+	for (i = 0; i < 104; i++) {
+		mid = (l + r) / 2;
+		if (C(mid)) //carriable
+			l = mid;
+		else
+			r = mid;
+	}
+	if (mid < 0.01) {
+		mid = 0.00000;
+	}
+	printf("%.2f\n", floor(mid * 100) / 100);
+    return 0;
+}
