@@ -1,0 +1,94 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Scanner;
+
+public class Main {
+    static int M, N, res, rtime;
+    static int[][] map, flip;
+    static int[][] d = new int[][]{{0, 1}, {0, -1}, {-1, 0}, {0, 0}};
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        res = Integer.MAX_VALUE;
+        M = sc.nextInt();
+        N = sc.nextInt();
+        map = new int[M][N];
+        flip = new int[M][N];
+        int[][] ansMatrix= new int[M][N];
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                map[i][j] = sc.nextInt();//map
+            }
+        }
+        for (int i = 0; i < (1 << N); i++) {
+            //init
+            for (int j = 0; j < M; j++) {
+                for (int k = 0; k < N; k++) {
+                    flip[j][k] = 0;
+                }
+            }
+            rtime = 0;
+            for (int j = 0; j < N; j++) {
+                if (((i >> j) & 1) == 1) {
+                    rtime++;
+                }
+            }
+            for (int j = 0; j < N; j++) {
+                flip[0][N - j - 1] = (i >> j) & 1;
+            }
+            fillall();
+            if (check()) {
+                if (res > rtime) {
+                    res = rtime;
+                    for (int j = 0; j < M; j++) {
+                        for (int k = 0; k < N; k++) {
+                            ansMatrix[j][k] = flip[j][k];
+                        }
+                    }
+                }
+            }
+        }
+        if (res < Integer.MAX_VALUE) {
+            for (int j = 0; j < M; j++) {
+                for (int k = 0; k < N; k++) {
+                    System.out.print(ansMatrix[j][k]);
+                    if (k != N - 1)
+                        System.out.print(" ");
+                }
+                System.out.println();
+            }
+        }
+        else
+            System.out.println("IMPOSSIBLE");
+    }
+    public static void fillall() {
+        for (int i = 1; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                int rt = getrtime(i - 1, j);//reverse time
+                if ((rt + map[i - 1][j]) % 2 == 1) {//need reverse
+                    flip[i][j] = 1;
+                    rtime++;
+                }
+            }
+        }
+    }
+    public static int getrtime (int x, int y) {
+        int r = 0;
+        for (int i = 0; i < 4; i++) {
+            int xx = x + d[i][0], yy = y + d[i][1];
+            if (xx < 0 || yy < 0 || xx >= M || yy >= N) continue;
+            r += flip[xx][yy];
+        }
+        return r;
+    }
+    public static boolean check() {
+        for (int i = M - 1; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                int rt = getrtime(i, j);//reverse time
+                if ((rt + map[i][j]) % 2 == 1)//need reverse
+                    return false;
+            }
+        }
+        return true;
+    }
+}
