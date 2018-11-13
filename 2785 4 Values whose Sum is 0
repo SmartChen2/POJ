@@ -1,0 +1,39 @@
+#include <iostream>
+#include <stdio.h>
+#include <algorithm>
+
+#define MAXN 4002
+#define MAXN2 16000004
+using namespace std;
+
+int A[MAXN], B[MAXN], C[MAXN], D[MAXN];
+int AB[MAXN2];
+int i, j, N;
+
+int main()
+{
+	scanf("%d", &N);
+	for (i = 0; i < N; i++) {
+		scanf("%d", &A[i]);
+		scanf("%d", &B[i]);
+		scanf("%d", &C[i]);
+		scanf("%d", &D[i]);
+	}
+	int cnt = 0;
+	for (i = 0; i < N; i++) {
+		for (j = 0; j < N; j++) {
+			AB[cnt++] = A[i] + B[j];
+		}
+	}
+	
+	sort(AB, AB + cnt);
+	int res = 0;
+	for (i = 0; i < N; i++) {
+		for (j = 0; j < N; j++) {
+			int cd = -(C[i] + D[j]);
+			res += upper_bound(AB, AB + cnt, cd) - lower_bound(AB, AB + cnt, cd);
+		}
+	}
+	printf("%d", res);
+    return 0;
+}
