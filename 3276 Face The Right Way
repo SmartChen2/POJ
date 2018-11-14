@@ -16,16 +16,33 @@ public class Main {
             if (c == 'F')
                 savedarr[i] = true;
         }
+        boolean fl = false;
+        for (int i = 0; i < reversed.length; i++) {
+            if (savedarr[i] == false) {
+                fl = true;
+                break;
+            }
+        }
+        if (!fl){
+            System.out.println("1 0");
+            return;
+        }
+        if (N == 1 && !savedarr[0]) {
+            System.out.println("1 1");
+            return;
+        }
+
+
         int K, i, sum;
         int am = Integer.MAX_VALUE, ak =  Integer.MAX_VALUE;
-        for (K = 0; K < N - 1; K++) {
+        for (K = 0; K < N; K++) {
             int M = 0;
             sum = 0;
             for (int j = 0; j < N; j++) {//init
                 arr[j] = savedarr[j];
                 reversed[j] = false;
             }
-            for (i = 0; i <= N - K; i++) {
+            for (i = 0; i <= N - K - 1; i++) {
                 if(K == 0 && i == N)
                     break;
                 if (i - K > 0 && reversed[i - K - 1])
@@ -33,7 +50,7 @@ public class Main {
                 if (sum % 2 == 1) {
                     arr[i] = !arr[i];//reverse
                 }
-                if (arr[i] == false) {//back
+                if (!arr[i]) {//back
                     M++;
                     reversed[i] = true;
                     arr[i] = true;//reverse it
@@ -46,7 +63,7 @@ public class Main {
                 if (sum % 2 == 1) {
                     arr[i] = !arr[i];//reverse
                 }
-                if (arr[i] == false) {//back
+                if (!arr[i]) {//back
                     M = Integer.MAX_VALUE;
                     break;
                 }
