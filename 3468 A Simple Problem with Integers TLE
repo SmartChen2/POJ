@@ -1,1 +1,47 @@
+#include <stdio.h>
+#include <iostream>
+typedef long long ll;
 
+#define MAXN 100001
+#define MAXQ 300006
+ll A[MAXN], sum[MAXN], CA[MAXQ];
+
+using namespace std;
+int i, j;
+
+int main() {
+	int N, Q;
+	scanf("%d %d", &N, &Q);
+	
+	for (i = 1; i <= N; i++) 
+		scanf("%d", &A[i]);
+	sum[0] = 0;
+	sum[1] = A[1];
+	for (i = 2; i <= N; i++) 
+		sum[i] = A[i] + sum[i - 1];
+	
+	int nq = 0, t = Q, a, b, N2 = N * 2, ra, rb;
+	ll ans;
+	while (t--) {
+		char c;
+		scanf("%s", &c);
+		if (c == 'C') {
+			scanf("%d %d %d", &CA[nq], &CA[nq + N], &CA[nq + N2]);
+			nq++;
+		}
+		else {
+			scanf("%d %d", &a, &b);
+			ans = sum[b] - sum[a - 1];
+			for(i = 0; i < nq; i++) {
+				if (CA[i] > b || CA[i + N] < a) continue;
+				ra = CA[i], rb = CA[i + N];
+				if (ra < a) ra = a;
+				if (rb > b) rb = b;
+				ans += (rb - ra + 1) * CA[i + N2];
+				
+			}
+			printf("%lld\n", ans);
+		}
+	}
+	return 0;
+}
