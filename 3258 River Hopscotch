@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+#define MAXN 50002
+int arr[MAXN];
+
+using namespace std;
+int L, N, M, i, j;
+
+bool c(int mid) {
+	int cnt = 0, last = 0;;
+	for(j = 1; j < N; j++) {
+		if (arr[j] - arr[last] >= mid) {
+			last = j;
+			continue;
+		}
+		if (cnt++ >= M) {
+			return false;
+		}
+	}
+	return true;
+}
+int main() {
+	scanf("%d %d %d", &L, &N, &M);
+	for (i = 1; i <= N; i++) 
+		scanf("%d", &arr[i]);
+	N += 2;
+	arr[0] = 0;
+	arr[N - 1] = L; 
+	sort(arr, arr + N);
+	int l = 0, r = L + 1;
+	while (l < r - 1) {
+		int mid = (l + r) / 2;
+		if (c(mid)) {
+			l = mid;
+		}
+		else {
+			r = mid;
+		}
+	}
+	printf("%d\n", l);
+	return 0;
+}
