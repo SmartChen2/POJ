@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+#define MAXN 1000
+
+using namespace std;
+int i, j, N, K, mid;
+int a[MAXN], b[MAXN];
+double val[MAXN];
+ 
+bool c(double avg) {
+	for (j = 0; j < N; j++) {
+		val[j] = a[j] - avg * b[j];
+	}
+	sort(val, val + N);
+	double sum = 0;
+	for (j = 0; j < K; j++) {
+		sum += val[N - j - 1];
+	}
+	return sum >= 0;
+}
+int main() {
+	while (scanf("%d %d", &N, &K) == 2) {
+		if (N == 0 && K == 0)
+			break;
+		double l = 0, r = 1e9, m;
+		K = N - K;
+		for (i = 0; i < N; i++) {
+			scanf("%d", &a[i]);
+		}
+		for (i = 0; i < N; i++) {
+			scanf("%d", &b[i]);
+		}
+		
+		while (l < r - 0.0001) {
+			m = (l + r) / 2;
+			if (c(m))
+				l = m;
+			else
+				r = m;
+		}
+		l *= 100;
+		printf("%.0f\n", l);
+	}
+	return 0;
+}
