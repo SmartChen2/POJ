@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+#define MAXN 100001
+int vrr[MAXN], wrr[MAXN];
+int ansar[MAXN];
+struct nod {
+	double dv;
+	int id;
+};
+nod n[MAXN];
+using namespace std;
+int i, j, N, K, mid;
+
+bool cmp (nod a, nod b) {
+	return a.dv < b.dv;
+}
+bool c(double val) {
+	double sum = 0;
+	for (j = 0; j < N; j++) {
+		n[j].dv = vrr[j] - wrr[j] * val;
+		n[j].id = j;
+	}
+	sort(n, n + N, cmp);
+	for (j = 0; j < K; j++) {
+		sum += n[N - 1 - j].dv;
+	}
+	return sum >= 0;
+}
+int main() {
+	double l = 0, r = 2e7;
+	scanf("%d %d", &N, &K);
+	for (i = 0; i < N; i++) {
+		scanf("%d", &vrr[i]);
+		scanf("%d", &wrr[i]);
+	}
+	for (i = 0; i < 50; i++) {
+		double m = (l + r) / 2;
+		if (c(m))
+			l = m;
+		else
+			r = m;
+	}
+	c(l);
+	for (j = 0; j < K; j++) {
+		ansar[j] = n[N - 1 - j].id;
+	}
+	sort(ansar, ansar + K);
+	for (j = 0; j < K - 1; j++) {
+		printf("%d ", ansar[j] + 1);
+	}
+	printf("%d\n", ansar[K - 1] + 1);
+	return 0;
+}
