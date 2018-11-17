@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+#define MAXN 100001
+int arr[MAXN];
+using namespace std;
+int i, j, N, K, l, r, mid;
+
+//find the minimal value of t that satisfies K * t + (tt - t) * 1 >= arr[i]
+//t mins were used by drying machine, tt - t mins were used to drying automatically.
+//tt - t must >= than the consumed time
+int findmin(int z, int tt) {
+	int ll = 0, rr = tt;
+	while (ll < rr - 1) {
+		int mm = (ll + rr) / 2;
+		if (K * mm + (tt - mm) >= z)
+			rr = mm;
+		else
+			ll = mm;
+	}
+	if (K * rr + (tt - rr) < z)
+		return -1;
+	return rr;
+}
+bool c(int tt) {
+	long long dt = 0;
+	for (j = 0; j < N; j++) {
+		if (arr[j] <= tt)
+			continue;
+		int u = arr[j] - dt;
+		if (u < 0) continue;
+		int temp = findmin(u, tt);
+		if (temp == -1)
+			return false;
+		tt -= temp;
+		dt += temp;
+	}
+	return dt <= tt;
+}
+int main() {
+	while (scanf("%d", &N) == 1) {
+		l = 0, r = 1e9;
+		for (i = 0; i < N; i++) {
+			scanf("%d", &arr[i]);
+		}
+		scanf("%d", &K);
+		sort(arr, arr + N);
+		while (l < r - 1) {
+			mid = (l + r) / 2;
+			if(c(mid)) 
+				r = mid;
+			else
+				l = mid;
+		}
+		printf("%d\n", r);
+	}
+	return 0;
+}
