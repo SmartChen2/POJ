@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+#define MAXN 100001
+int arr[MAXN];
+
+using namespace std;
+int i, j, N, M;
+bool c(int mid) {
+	int cnt = 1, sum = 0;
+	for (j = 0; j < N; j++) {
+		sum += arr[j];
+		if (sum <= mid) continue;
+		j--;
+		sum = 0;
+		if (cnt++ >= M)
+			return false;
+	}
+	return true;
+}
+int main() {
+	int l = 0, r = 1, mid;
+	scanf("%d %d", &N, &M);
+	for (i = 0; i < N; i++) {
+		scanf("%d", &arr[i]);
+		r += arr[i];
+		l = max(l, arr[i]);
+	}
+	l -= 1;
+	
+	while (l < r - 1) {
+		mid = (l + r) / 2;
+		if (c(mid))
+			r = mid;
+		else
+			l = mid;
+	}
+	printf("%d\n", r);
+	return 0;
+}
