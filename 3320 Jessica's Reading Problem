@@ -1,0 +1,37 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include <map>
+
+#define MAXP  1000000
+int ar[MAXP];
+using namespace std;
+int i, j, P;
+
+int main() {
+	scanf("%d", &P);
+	set<int> allp;
+	for (i = 0; i < P; i++) {
+		scanf("%d", &ar[i]);
+		allp.insert(ar[i]);
+	}
+	int l = 0, r = 0, tnum = allp.size(), num = 0;
+	int ans = P;
+	map<int, int> count;
+	while (l < P) {
+		while (num < tnum && r < P) {
+			if (count[ar[r]]++ == 0)
+				num++;
+			r++;
+		}
+		if (num < tnum)
+			break;
+		ans = min(ans, (r - l));
+		if (--count[ar[l]] == 0)
+			num--;
+		l++;
+	}
+	printf("%d\n", ans);
+	return 0;
+}
