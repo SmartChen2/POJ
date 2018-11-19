@@ -21,7 +21,6 @@ struct PA {
 vector<edge> G[MAXN];
 int LK[MAXN];
 int i, j, P, K, N, ans;
-//first is cost, second is id, thrid is LK;
 
 bool cdijistra(int m) {
 	fill(LK, LK + N, -1);
