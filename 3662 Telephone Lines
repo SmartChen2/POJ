@@ -1,0 +1,84 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+using namespace std;
+
+struct edge {
+	int to, cost;
+};
+struct PA {
+	int id, lk;
+	bool operator < (const PA a) const {
+		return a.lk > lk;
+	}
+};
+#define INF 1e9
+#define MAXN 1000
+#define MAXP 10000
+
+vector<edge> G[MAXN];
+int LK[MAXN];
+int i, j, P, K, N, ans;
+//first is cost, second is id, thrid is LK;
+
+bool cdijistra(int m) {
+	fill(LK, LK + N, -1);
+	LK[0] = K;
+	priority_queue<PA> q;
+	PA tp;
+	tp.id = 0;
+	tp.lk = K;
+	q.push(tp);
+	while (!q.empty()) {
+		PA tpp = q.top();
+		q.pop();
+		int k = tpp.lk, id = tpp.id;
+		if (k < LK[id]) continue; 
+		for (j = 0; j < G[id].size(); j++) {
+			int to = G[id][j].to, cost = G[id][j].cost - m, nl = LK[id];//consume 1 L if cost is larger than 0
+			if (cost > 0) nl--;// consume 1 L
+			if (nl < 0) continue;
+			if (LK[to] >= nl) continue;
+
+			LK[to] = nl;
+			PA np;
+			np.id = to;
+			np.lk = LK[to];
+			q.push(np);
+		}
+	}
+	return LK[N - 1] >= 0;
+}
+
+int main() {
+	scanf("%d %d %d", &N, &P, &K);
+	ans = 1e6;
+	for (i = 0; i < P; i++) {
+		int a, b, l;
+		edge ed1, ed2;
+		scanf("%d %d %d", &a, &b, &l);
+		a--; b--;
+		ed1.to = b;
+		ed1.cost = l;
+		ed2.to = a;
+		ed2.cost = l;
+		G[a].push_back(ed1);
+		G[b].push_back(ed2);
+	}
+	if (!cdijistra(1e6)) {
+		printf("-1\n");
+		return 0;
+	}
+	int l = -1, r = 1e6, mid;
+	while (l < r - 1) {
+		mid = (l + r) / 2;
+		if (cdijistra(mid))
+			r = mid;
+		else
+			l = mid;
+	}
+	printf("%d\n", r);
+	return 0;
+}
