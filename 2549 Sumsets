@@ -1,0 +1,67 @@
+package com.company;
+
+import java.io.BufferedInputStream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class Main {
+    static int[][]ab;
+    static int ans, cnt;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(new BufferedInputStream(System.in));
+        while (true) {
+            int N = sc.nextInt();
+            if (N == 0)
+                break;
+            int[] arr = new int[N];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = sc.nextInt();
+            }
+            int SN = (N - 1) * N / 2;
+            ab = new int[SN][3];
+            //a + b = b - c
+            cnt = 0;
+            for (int i = 0; i < N; i++) {
+                for (int j = i + 1; j < N; j++) {
+                    ab[cnt][0] = arr[i] + arr[j];
+                    ab[cnt][1] = i;
+                    ab[cnt++][2] = j;
+                }
+            }
+            Arrays.sort(ab, new Comparator<int[]>() {
+                @Override
+                public int compare(int[] o1, int[] o2) {
+                    return o1[0] - o2[0];
+                }
+            });
+
+            ans = Integer.MIN_VALUE;
+            for (int i = 0; i < N; i++) {
+                for (int j = i + 1; j < N; j++) {
+                    int c_d = arr[i] - arr[j];
+                    f(i, j, c_d, arr[i]);
+                    f(i, j, -c_d, arr[j]);
+                }
+            }
+            if (ans ==  Integer.MIN_VALUE)
+                System.out.println("no solution");
+            else
+                System.out.println(ans);
+        }
+    }
+    public static void f(int i, int j, int c_d, int d) {
+        int l = 0, r = cnt;
+        while (l < r - 1) {
+            int mid = (l + r) / 2;
+            if (ab[mid][0] < c_d )
+                l = mid;
+            else
+                r = mid;
+        }
+        for (int k = l + 1; k < cnt && ab[k][0] == c_d; k++) {
+            if (ab[k][2] == i || ab[k][2] == j || ab[k][1] == i || ab[k][1] == j) continue;
+            ans = Math.max(ans, d);
+        }
+    }
+}
