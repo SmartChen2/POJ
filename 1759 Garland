@@ -1,0 +1,35 @@
+#include <cstdio>
+#include <iostream>
+
+using namespace std;
+int i, j, N;
+double A, Hi_1;
+
+bool c(double m) {
+	double Hi_2 = A, Hi;
+	Hi_1 = m;
+	for (i = 2; i < N; i++) {
+		Hi = 2 * Hi_1 - Hi_2 + 2;
+		if (Hi < 0)
+			return false;
+		Hi_2 = Hi_1;
+		Hi_1 = Hi;
+	}
+	return true;
+}
+
+int main() {
+	scanf("%d %lf", &N, &A);
+	
+	double l = 0, r = 1e9, mid;
+	while (l < r - 0.000001){
+		mid = (l + r) / 2;
+		if (c(mid))
+			r = mid;
+		else
+			l = mid;
+	}
+	c(r);
+	printf("%.2f\n", Hi_1);
+	return 0;
+}
