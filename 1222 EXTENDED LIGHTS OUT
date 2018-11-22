@@ -1,0 +1,88 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int N = 5, M = 6;
+int mat[5][6];
+int so[5][6];
+int d[4][2]{
+	{0, 0}, {-1, 0}, {0, 1}, {0, -1}
+};
+
+bool getstatus(int x, int y) {
+	int xx, yy;
+	int i;
+	int sum = mat[x][y];
+	for (i = 0; i < 4; i++) {
+		xx = x + d[i][0];
+		yy = y + d[i][1];
+		if (xx < 0 || xx >= N || yy < 0 || yy >= M) continue;
+		sum += so[xx][yy];
+	}
+	//sum总是相等 
+	return sum % 2 == 0;
+}
+
+bool judge(){
+	for (int j = 0; j < M; j++) {
+		if (!getstatus(N - 1, j)) return false;
+	}
+	return true;
+}
+
+void display(){
+	int i, j;
+	for(i = 0; i < N; i++) {
+		for (j = 0; j < M; j++) {
+			printf("%d%c", so[i][j], j == M - 1 ? '\n' : ' ');
+		}
+	}
+}
+void solve(){
+	int i, j;
+	for(i = 1; i < N; i++) {
+		for (j = 0; j < M; j++) {
+			//i th row, jth column
+			if (getstatus(i - 1, j)) continue;
+			so[i][j] = 1;
+		}
+	}
+}
+
+void getinput(){
+	int i, j;
+	for (i = 0; i < 5; i++)
+		for (j = 0; j < 6; j++) 
+			scanf("%d", &mat[i][j]);
+}
+
+void clearso() {
+	int i, j;
+	for (i = 0; i < 5; i++)
+		for (j = 0; j < 6; j++) 
+			so[i][j] = 0;
+}
+
+int main() {
+	int t = 0, z, i, j;
+	scanf("%d", &t);
+	for (z = 0; z < t; z++){
+		getinput();
+		for (i = 0; i < (1 << M); i++) {
+			clearso();
+			for (j = 0; j < M; j++) {
+				if (i >> j & 1) {
+					so[0][j] = 1;
+				}
+			}
+			solve();
+			if (judge()) {
+				printf("PUZZLE #%d\n", z + 1);
+				display();
+				break;
+			}
+		}
+	}
+	return 0;
+}
