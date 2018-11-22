@@ -1,0 +1,48 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+
+typedef long long ll;
+using namespace std;
+ll N, M;
+
+bool check (ll i1, ll j1, ll m) {
+	ll num = i1 * i1 + 100000 * i1 + j1 * j1 - 100000 * j1 + i1 * j1;
+	return num < m;
+}
+bool c(ll m) {
+	ll sum = 0;
+	for(int j = 1; j <= N; j++) {
+ 		ll cl = 0, cr = N + 1;
+ 		while (cl < cr - 1) {
+ 			ll mmid = (cl + cr) / 2;
+ 		 	if (check(mmid, j, m))
+ 		 		cl = mmid;
+	 		else
+	 			cr = mmid;
+ 		}
+ 		sum += cl;
+	}
+	//total sum elments smaller than m
+	//m is the sum + 1 smallest num
+	return sum + 1 <= M;
+}
+
+int main() {
+	int t = 0;
+	scanf("%d", &t);
+	while (t--) {
+		scanf("%d %d", &N, &M);
+		ll r = N * N + 100000 * N + N * N + N * N;
+		ll l = -100000 * N, mid;
+		while(l < r - 1) {
+			mid = (l + r) / 2;
+			if (c(mid))
+				l = mid;
+			else
+				r = mid;
+		}
+		printf("%lld\n", l);
+	}
+	return 0;
+}
