@@ -1,0 +1,36 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <vector> 
+using namespace std;
+vector <pair<int,int> > vc;
+
+int main() {
+	long long n, sum = 0, sq, l = 1, r = 1;
+	scanf("%lld", &n);
+	while (1) {
+		while (sum < n) {
+			sq = r * r;
+			sum += sq;
+			r++;
+		}
+		if (sq > n)
+			break;
+		if (sum == n) {
+			vc.push_back(make_pair(r-l, l));
+		}
+		sum -= l * l;
+		l++;
+	}
+	int s = vc.size();
+	printf("%d\n", s);
+	for (int k = 0; k < s; k++) {
+		int len = vc[k].first;
+		int be = vc[k].second;
+		printf("%d", len);
+		for (int i = 0; i < len; i++)
+			printf(" %d", (i + be));
+		printf("\n");
+	}
+	return 0;
+}
