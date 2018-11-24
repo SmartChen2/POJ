@@ -1,0 +1,63 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+using namespace std;
+const int MAXN = 10001;
+const int MAXSIZE = 1<<15;
+const double PI = acos(-1.0);
+int n, c, s, angle;
+int len[MAXN];
+double pre[MAXN];
+double vx[MAXSIZE], vy[MAXSIZE];
+double ang[MAXSIZE];
+
+void init(int k, int l, int r){
+	ang[k] = vx[k] = 0.0;
+	if (l == r - 1)
+		vy[k] = len[l];
+	else {
+		int m = (l + r)/2;
+		int chl = k * 2 + 1, chr = chl + 1;
+		init(chl, l, m);
+		init(chr, m, r);
+		vy[k] = vy[chl] + vy[chr];
+	}
+}
+
+void update(int s, double a, int k, int l, int r) {
+	if (s <= l || s >= r)
+		return;
+	int chl = k * 2 + 1, chr = chl + 1;
+	int mid = (l + r) >> 1;
+	//在更新该节点之前 已经更新了他的子节点 
+	update(s, a, chl, l, mid);
+	update(s, a, chr, mid, r);
+	if (s <= mid) ang[k] += a;
+	
+	double si = sin(ang[k]), co = cos(ang[k]);
+	vx[k] = vx[chl] + vx[chr] * co - vy[chr] * si;
+	vy[k] = vy[chl] + vy[chr] * co + vx[chr] * si;
+}
+
+int main() {
+	while (scanf("%d %d", &n, &c) == 2) {
+		for (int i = 0; i < n; i++) {
+			scanf("%d", &len[i]);
+			pre[i] = PI;
+		}
+			
+		init(0, 0, n);
+		
+		for (int i = 0; i < c; i++) {
+			scanf("%d %d", &s, &angle);
+			double a = angle / 360.0 * 2 * PI;
+			//由pre[s]度变成a度 
+			//相对于原来的角度 pre[s]转动了多少度
+			update(s, a - pre[s], 0, 0, n);
+			pre[s] = a;
+			printf("%.2f %.2f\n", vx[0], vy[0]);
+		}
+		printf("\n"); 
+	}
+	return 0;
+}
