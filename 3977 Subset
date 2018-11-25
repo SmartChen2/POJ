@@ -1,0 +1,90 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <climits>
+#include <algorithm>
+
+using namespace std;
+typedef long long ll;
+#define MAXN 35
+const int SETSIZE = 1 << 19;
+int N;
+pair<ll, int> halfset[SETSIZE];
+//fist is value, second is id;
+
+ll arr[MAXN];
+ll ans = LLONG_MAX, acnt;
+
+bool cmp(pair<ll, int> a, pair<ll, int> b){
+	if(a.first == b.first) return a.second < b.second;
+	return a.first < b.first;
+}
+
+ll mabs(ll x){
+	return x >= 0 ? x : -x;
+}
+
+void update(int pos, ll v, int c) {
+	ll temp = mabs((halfset[pos].first + v));
+	int ncnt = halfset[pos].second + c;
+
+	if (ans > temp || (ans == temp && ncnt < acnt)) {
+		ans = temp;
+		acnt = ncnt;
+	}
+}
+
+int main() {
+	int i, j;
+	while (scanf("%d", &N) == 1) {
+		if (N == 0)
+			break;
+		for (i = 0; i < N; i++)
+			scanf("%lld", &arr[i]);
+		//enumerate half of the set
+		int hn = N / 2;
+		for (i = 0; i < 1 << hn; i++) {
+			ll val = 0;
+			int cnt = 0;
+			for (j = 0; j < hn; j++) {
+				if ((i >> j) & 1) {
+					val += arr[j];
+					cnt++;
+				}
+			}
+			halfset[i] = make_pair(val, cnt);
+		}
+		sort(halfset, halfset + (1 << hn), cmp);
+		
+		//deal with the left elements
+		ans = LLONG_MAX;
+		for (i = 0; i < 1 << (N - hn); i++) {
+			ll val = 0;
+			int cnt = 0;
+			for (j = 0; j < N - hn; j++) {
+				if ((i >> j) & 1) {
+					val += arr[j + hn];
+					cnt++;
+				}
+			}
+			
+			int low = (lower_bound(halfset, halfset + (1 << hn), make_pair(-val, 0), cmp) - halfset);
+			//equal or bigger than it
+			if ((cnt + halfset[low].second) > 0)
+				update(low, val, cnt);
+			else if (low + 1 < (1 << hn))
+				update(low + 1, val, cnt);
+			int k;
+			//find the element small than it
+			if (low - 1 >= 0) {
+			 	for (k = low - 2; k >= 0 && halfset[k].first == halfset[low - 1].first && (halfset[k].second + cnt) > 0; k--);
+			 	
+			 	k++;
+			 	if ((cnt + halfset[k].second) > 0)
+					update(k, val, cnt);
+			}
+		}
+		printf("%lld %d\n", ans, acnt);
+	}
+	return 0;
+}
