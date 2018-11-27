@@ -1,0 +1,44 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+typedef long long ll;
+struct cow {
+	ll w, s, ws;
+};
+#define MAXN 50000
+
+cow c[MAXN];
+int N;
+
+bool cmp(cow c1, cow c2) {
+	return c1.ws < c2.ws;
+}
+bool con(ll risk) {
+	long long ttw = 0;
+	for (int i = 0; i < N; i++) {
+		if (ttw - c[i].s > risk)
+			return false;
+		ttw += c[i].w;
+	}
+	return true;
+}
+
+int main() {
+	scanf("%d", &N);
+	for (int i = 0; i < N; i++) {
+		scanf("%d %d", &c[i].w, &c[i].s);
+		c[i].ws = c[i].w +c[i].s;
+	}
+	ll l = -2e9, r = 2e9, mid;
+	sort(c, c + N, cmp);
+	while (l < r - 1) {
+		mid = (l + r)/2;
+		if (con(mid))
+			r = mid;
+		else
+			l = mid;
+	}
+	printf("%lld\n", r);
+}
