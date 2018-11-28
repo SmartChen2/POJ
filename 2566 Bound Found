@@ -1,0 +1,69 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100001
+using namespace std;
+int arr[MAXN];
+struct node {
+	int v, id;
+}sum[MAXN];
+typedef long long ll;
+
+int n, k;
+int l, r, t, al, ar, ans, s;
+
+void solve(int t) {
+	ans = 2000000010;
+	l = 0, r = 1;
+	while (r < n) {
+ 		s = sum[r].v - sum[l].v;
+		if (abs(s - t) < abs(ans - t)) {
+			ans = s;
+			al = l;
+			ar = r;
+		}
+		if (s > t) l++;
+		else r++;
+		if (l == r) r++;
+	}
+
+	if (sum[al].id > sum[ar].id) {
+		int temp = ar;
+		ar = al;
+		al = temp;
+	}
+	printf("%d %d %d\n", ans, sum[al].id + 1, sum[ar].id);
+}
+
+bool cmp(node n1, node n2) {
+	return n1.v < n2.v;
+}
+
+int main() {
+	while (1) {
+		scanf("%d %d", &n, &k);
+		if (n == 0 && k == 0)
+			break;
+		for (int i = 0; i < n; i++) {
+			scanf("%d", &arr[i]);
+		}
+		sum[0].v = arr[0];
+		sum[0].id = 1;
+		for (int i = 1; i < n; i++) {
+			sum[i].v = sum[i - 1].v + arr[i];
+			sum[i].id = i + 1;
+		}
+		n++;
+		sum[n - 1].v = 0;
+		sum[n - 1].id = 0;
+
+		sort(sum, sum + n, cmp);
+		
+		while (k--) {
+			scanf("%d", &t);
+			solve(t);
+		}
+	}
+	return 0;
+}
