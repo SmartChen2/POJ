@@ -1,0 +1,62 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#define MAXN 100002
+typedef long long ll;
+using namespace std;
+int arr[MAXN + 1];
+ll bit0[MAXN + 1], bit1[MAXN + 1];
+
+int N, Q; 
+
+ll sums(ll* b, int i) {
+	ll s = 0;
+	while (i > 0) {
+		s += b[i];
+		i -= i & -i;
+		//i & -i is the lowest bit of i
+	}
+	return s;
+}
+
+void add(ll* b, int i, int v) {
+	while (i <= N) {
+		b[i] += v;
+		i += i & -i;
+	}
+}
+
+int main() {
+	scanf("%d %d", &N, &Q);
+	fill(bit0, bit0 + N + 1, 0);
+	fill(bit1, bit1 + N + 1, 0);
+	for (int i = 1; i <= N; i++) {
+		scanf("%d", &arr[i]);
+		//init
+		add(bit0, i, arr[i]);
+	}
+	
+	while (Q--) {
+		char c;
+		ll l, r, val, res;
+		getchar();
+		scanf("%c", &c);
+		getchar();
+		if (c == 'C') {
+			scanf("%lld %lld %lld", &l, &r, &val);
+		 	add(bit0, l, val * (1 - l));
+		 	add(bit1, l, val);
+		 	add(bit0, r + 1, val * r);
+		 	add(bit1, r + 1, -val);
+		}
+		else {
+			scanf("%lld %lld", &l, &r);
+			res = 0;
+			res += r * sums(bit1, r) - (l - 1) * sums(bit1, l - 1);
+			res += sums(bit0, r) - sums(bit0, l - 1);
+			printf("%lld\n", res);
+		}
+	}
+	return 0;
+}
