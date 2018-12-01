@@ -1,0 +1,63 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#define MAXN 20003
+using namespace std;
+typedef long long ll;
+struct cow{
+	ll vol, pos;
+}cows[MAXN];
+int N; 
+ll dis[MAXN];//distance binary index tree
+ll cnt[MAXN];//cnt binary index tree
+bool cmp(cow c1, cow c2) {
+	return c1.vol < c2.vol;
+}
+
+void add(ll* bt, int i, int v) {
+	while (i < MAXN) {//position is updated, range of it is [1, 20001), so upperbound is MAXN
+		bt[i] += v;
+		i += i & -i;
+	}
+}
+
+ll sum(ll* bt, int i) {
+	ll s = 0;
+	while (i >= 1) {
+		s += bt[i];
+		i -= i & -i;
+	}
+	return s;
+}
+
+ll solve() {
+	ll ans = 0;
+	ll td = 0;
+	for (int i = 0; i < N; i++){
+		ll lcnt = sum(cnt, cows[i].pos);
+		ll ldis = sum(dis, cows[i].pos);
+	 	ans += cows[i].vol * (lcnt * cows[i].pos - ldis);//left
+	 	ans += cows[i].vol * (td - ldis - (i - lcnt) * cows[i].pos);
+	 	
+	 	//update is carried after calculating ans.
+		td += cows[i].pos;
+		add(cnt, cows[i].pos, 1);//The cnt behind pos add 1
+	 	add(dis, cows[i].pos, cows[i].pos);//The distance after cnt add cows[i].pos
+	 	//sum(cnt, cows[i].pos) means the cnt of element bigger than pos
+	 	//so i - sum(cnt, cows[i].pos) means the cnt of element smmller than pos
+	}
+	return ans;
+} 
+
+int main() {
+	scanf("%d", &N);
+	for (int i = 0; i < N; i++)
+		scanf("%d %d", &cows[i].vol, &cows[i].pos);
+	sort(cows , cows + N , cmp);
+	fill(dis, dis + MAXN, 0);
+	fill(cnt, cnt + MAXN, 0);
+	
+	printf("%lld\n", solve());
+	return 0;
+}
