@@ -1,0 +1,72 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+
+#define MAXN 9
+#define MAXM 31
+#define INF 1e12
+
+using namespace std;
+int t[MAXN];
+int d[MAXM][MAXM];
+
+double dp[1 << MAXN][MAXM];
+int n, m, p, a, b;
+
+void solve() {
+	dp[(1 << n) - 1][a - 1] = 0;
+	double ans = INF;
+
+	//dp[s][m] means the min cost of using the s ticket and arrive city m
+	for (int s = (1 << n) - 1; s >= 0; s--) {//dp by using ticket
+		ans = min(ans, dp[s][b - 1]);
+		for (int v = 0; v < m; v++) {//start from v
+		
+			for (int i = 0; i < n; i++) {
+				if (s >> i & 1) {//this ticket is not used, try it
+					for (int u = 0; u < m; u++) { //arrive at u
+						if (d[v][u] >= 0) {
+							//go to u by using ticket i;
+							dp[s & ~(1 << i)][u] = min(dp[s & ~(1 << i)][u], dp[s][v] + (double)d[v][u] / t[i]);
+						}
+					}
+				}
+
+			}
+		}
+	}
+	if (ans >= INF) {
+		printf("Impossible\n");
+	}
+	else
+		printf("%.4f\n", ans);
+}
+
+int main() {
+	while (1) {
+		scanf("%d %d %d %d %d", &n, &m, &p, &a, &b);
+		if (n + m + p + a + b == 0) break;
+
+		for (int i = 0; i < n; i++)
+			scanf("%d", &t[i]);
+
+		fill(d[0], d[0] + MAXM * MAXM, -1);
+
+		for (int i = 0; i < 1 << n; i++) {
+			fill(dp[i], dp[i] + m, INF);
+		}
+
+		for (int i = 0; i < p; i++) {
+			int f, t, c;
+			scanf("%d %d %d", &f, &t, &c);
+			f--;
+			t--;
+			d[f][t] = c;
+			d[t][f] = c;
+		}
+		//get input, init
+		solve();
+	}
+	return 0;
+}
