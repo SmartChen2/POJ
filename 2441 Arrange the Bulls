@@ -1,0 +1,54 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+#include <stdlib.h> 
+#include <bitset> 
+using namespace std;
+int N, M;
+#define MAXM 20
+int like[MAXM][MAXM];
+int dp[1 << MAXM];
+
+int main() {
+	scanf("%d %d", &N, &M);
+	fill(like[0], like[0] + MAXM * MAXM, 0);
+	fill(dp, dp + (1 << MAXM), 0);
+	for(int i = 0; i < N; i++) {
+		int c, pl;
+		scanf("%d", &c);
+		for (int j = 0; j < c; j++) {
+			scanf("%d", &pl);
+			like[i][pl - 1] = 1;
+		}
+	}
+	
+	for(int i = 0; i < M; i++) {
+		if (like[0][i])
+			dp[1 << i] = 1;
+	}
+	
+	for (int i = 1; i < N; i++) {
+		int comb = (1 << i) - 1;
+		//This will enumerate all the subsets of M whose size is i; Means i bull teams is satisfaied.
+		while (comb < 1 << M) {//The sub set 
+			if (dp[comb]) {
+				for (int j = 0; j < M; j++) {//in this case compute the next state
+					if (like[i][j] && !((comb >> j) & 1)) {
+						dp[comb | (1 << j)] += dp[comb];
+					}
+				}
+			}
+			int x = comb & -comb, y = comb + x;
+			comb = ((comb & ~y) / x >> 1) | y;
+		}
+	}
+	
+	long long ans = 0;
+	for (int b = 0; b < 1 << M; b++) {
+		if (bitset<32>(b).count() == N) {
+			ans += dp[b];
+		}
+	}
+	printf("%lld\n", ans);
+}
