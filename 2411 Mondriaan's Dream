@@ -1,0 +1,48 @@
+#include <cstdio>
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+typedef long long ll;
+using namespace std;
+
+#define MAXS 1 << 11
+ll dp[2][MAXS];
+ll h, w;
+
+int main() {
+	while (1) {
+		scanf("%d %d", &h, &w);
+		if (h + w <= 0)
+			break;
+		
+		fill(dp[0], dp[0] + 2 * (MAXS), 0);
+		ll *crt = dp[0];
+		ll *next = dp[1];
+		crt[0] = 1;
+		
+		for (int i = h - 1; i >= 0; i--) {
+			for (int j = w - 1; j >= 0; j--) {
+				for (int used = 0; used < 1 << w; used++) {
+					if ((used >> j) & 1) {
+						//leave the chance to others
+						next[used] = crt[used & ~(1 << j)];
+					}
+					else {
+						ll res = 0;
+						//Horizontally
+						if (j + 1 < w && !(used >> (j + 1) & 1)) {
+							res += crt[used | (1 << (j + 1))];
+						}
+						//Erectly
+						if (i + 1 < h) {
+							res += crt[used | (1 << j)];
+						}
+						next[used] = res;
+					}
+				}
+				swap(crt, next);
+			}
+		}
+		printf("%lld\n", crt[0]);
+	}
+}
