@@ -22,7 +22,7 @@ int main() {
 			like[i][pl - 1] = 1;
 		}
 	}
-	
+	//initialize the dp array according to the 1st bull's preference.
 	for(int i = 0; i < M; i++) {
 		if (like[0][i])
 			dp[1 << i] = 1;
@@ -30,7 +30,7 @@ int main() {
 	
 	for (int i = 1; i < N; i++) {
 		int comb = (1 << i) - 1;
-		//This will enumerate all the subsets of M whose size is i; Means i bull teams is satisfaied.
+		//This will enumerate all the subsets of M whose size is i; Means i bull teams is satisfaied. This is to satisfy the (i+1)th bull too.
 		while (comb < 1 << M) {//The sub set 
 			if (dp[comb]) {
 				for (int j = 0; j < M; j++) {//in this case compute the next state
