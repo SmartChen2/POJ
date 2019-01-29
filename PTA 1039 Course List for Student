@@ -1,0 +1,50 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+int main() {
+	int N, K;
+	
+	scanf("%d %d", &N, &K);
+	map<string, vector<int> > mp;
+	
+	//input courses
+	for (int i = 0; i < K; i++) {
+		int th, cnt;
+		scanf("%d %d", &th, &cnt);
+		
+		for (int j = 0; j < cnt; j++) {
+			string st;
+			cin >> st;
+			mp[st].push_back(th);
+		}
+	}
+	
+	vector<string> sname;
+	//input student name 
+	for (int i = 0; i < N; i++) {
+		string st;
+		cin >> st;
+		sname.push_back(st);
+	}
+	
+	for (int i = 0; i < sname.size(); i++) {
+		cout << sname[i];
+		mp[sname[i]]; 
+		map<string, vector<int> >:: iterator it = mp.find(sname[i]);
+		
+		vector<int> vec = it->second;
+		printf(" %d", vec.size());
+			
+		sort(vec.begin(), vec.end());
+		for (int j = 0; j < vec.size(); j++) {
+			printf(" %d", vec[j]);
+		}
+		printf("\n");
+	}
+	return 0;
+}
