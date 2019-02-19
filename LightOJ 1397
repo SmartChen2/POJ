@@ -1,0 +1,125 @@
+#include <algorithm>
+#include <iostream>
+#include <cstdio>
+#include <cmath>
+
+using namespace std;
+const int siz = 10;
+const int mod = 9;
+
+int map[siz][siz];
+int sq[3][3];
+int rem[10];
+int voi[82][2];
+
+bool back = 0;
+int tot, vdcnt;
+int cas = 1;
+
+bool judge(int x, int y, int v) {
+	if ((map[x][9] >> v) & 1) 
+		return false;
+	if ((map[9][y] >> v) & 1) 
+		return false;
+	if ((sq[x/3][y/3] >> v) & 1)
+		return false;
+	return true;
+}
+
+void findbestpos(int& x, int& y) {
+	int cnt = 10, num;
+	for (int i = 0; i < vdcnt; i++) {
+		num = 0;
+		int dx = voi[i][0];
+		int dy = voi[i][1];
+		if (map[dx][dy])	continue;
+		
+		for (int j = 1; j <= 9; j++) { 
+			if (judge(dx, dy, j))
+				num++;
+		}
+		
+		if (num < cnt) {
+			x = dx;
+			y = dy;
+			cnt = num;
+		}
+	}
+}
+
+void show() {
+	printf("Case %d:\n", cas++);
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) 
+			printf("%d", map[i][j]);
+		printf("\n");
+	}
+}
+
+void dfs(int layer) {
+	if (back) return;
+	if (layer == tot) {
+		show();
+		back = 1;
+		return;
+	}
+
+	int x, y;
+	findbestpos(x, y);
+	for (int i = 1; i <= 9; i++) {
+		if (rem[i] == 0) continue;
+		if (!judge(x, y, i)) continue;
+		
+		map[x][y] = i;//use it 
+		rem[i]--;
+		map[x][9] |= 1 << i;
+		map[9][y] |= 1 << i;
+		sq[x/3][y/3] |= 1 << i;
+		
+		dfs(layer + 1);
+		
+		map[x][9] &= ~(1 << i);//restore
+		map[9][y] &= ~(1 << i);
+		sq[x/3][y/3] &= ~(1 << i);
+		rem[i]++;
+		map[x][y] = 0;
+	}
+}
+
+int main()
+{
+	int N = 9, t;
+	scanf("%d", &t);
+	while (t--) {
+		tot = 81;
+		back = 0;
+		vdcnt = 0;
+		fill(rem, rem + 10, 9);
+		fill(sq[0], sq[0] + 3 * 3, 0);
+
+		for (int i = 0; i < N; i++) {
+			char str[11];
+			scanf("%s", str);
+			for (int j = 0; j < N; j++) {
+				int v = str[j] - '0';
+				if (str[j] == '.') {
+					voi[vdcnt][0] = i;
+					voi[vdcnt++][1] = j;
+					v = 0;
+				}
+				
+				map[i][j] = v;
+				if (v > 0) {
+					rem[v]--;
+					map[i][9] |= 1 << v;
+					map[9][j] |= 1 << v;
+					sq[i/3][j/3] |= 1 << v;
+					tot--;
+				}
+			}
+		}
+		dfs(0);
+	}
+	
+	return 0;
+}
