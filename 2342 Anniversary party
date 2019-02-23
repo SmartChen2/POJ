@@ -1,0 +1,49 @@
+#include <algorithm>
+#include <iostream>
+#include <cstdio>
+#include <vector>
+using namespace std;
+const int siz = 6007;
+int dp[siz][2];
+bool rt[siz];
+vector<int> G[siz];
+int N;
+
+void dfs(int now) {
+	for (int i = 0; i < G[now].size(); i++) {
+		int next = G[now][i];
+		dfs(next);
+		dp[now][0] += max(dp[next][0], dp[next][1]);//领导不去 他的下属可以去 也可以不去 
+		dp[now][1] += dp[next][0];//领导去了 他的下属一定不能去 
+	}
+}
+int main()
+{
+	cin >> N;
+	fill(dp[0], dp[0] + siz * 2, 0);
+	fill(rt, rt + siz, 0);
+	
+	for (int i = 1; i <= N; i++)  scanf("%d", &dp[i][1]);
+	
+	while (1) {
+		int a, b;
+		scanf("%d %d", &a, &b);
+		if (!a || !b)
+			break;
+		G[b].push_back(a);
+		rt[a] = 1;
+	}
+	
+	int root = 1;
+	for (int i = 1; i <= N; i++)  
+		if (!rt[i])	 {
+			root = i;
+			break;
+		}
+		
+	dfs(root);
+	
+	cout << max(dp[root][0], dp[root][1]) << endl;
+	
+	return 0;
+}
