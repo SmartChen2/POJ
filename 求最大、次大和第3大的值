@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <map>
+#include <set>
+using namespace std;
+int arr[3];
+const int inf = -200000000; 
+
+int main()
+{   
+    int N;
+    scanf("%d", &N);
+    arr[0] = inf;
+    arr[1] = inf;
+    arr[2] = inf;
+    
+    for (int i = 0; i < N; i++) {
+    	int a;
+    	scanf("%d", &a);
+    	int pos = 0, cnt = 0;
+    	int temp = -inf;
+    	
+    	for (int j = 0; j < 3; j++) {//找到最小的 
+    		if (arr[j] < temp) {
+    			temp = arr[j];
+    			pos = j;
+    		}
+    	}
+    	for (int j = 0; j < 3; j++) {
+    		if (a == arr[j]) cnt++;
+    	}
+    	if (arr[pos] < a && cnt == 0) {
+    		arr[pos] = a;
+    	}
+    }
+	if (N < 3) {
+    	printf("Invalid Input\n");
+    	return 0;
+    }
+    int cnt = 0;
+    for (int j = 0; j < 3; j++) {
+    	if (arr[j] == inf) cnt++;
+    }
+    
+    if (cnt == 2) {
+    	printf("There is no second largest and third largest element\n");
+    	return 0;
+    }
+    if (cnt == 1) {
+    	printf("There is no third largest element\n");
+    	return 0;
+    }
+    sort(arr, arr + 3);
+   	for (int j = 0; j < 3; j++) {
+    	printf("%d%c", arr[2 - j], j == 2 ? '\n':' ');
+    }
+     
+    return 0;
+}
