@@ -1,0 +1,62 @@
+#include<stdio.h>
+#include<string.h>
+#include <algorithm>
+using namespace std;
+const int si = 27;
+int map[si][si], indegree[si], q[si];//入度为0 表示都是在指向别人 所以是最小
+int Topo(int n) {
+	int c = 0, loc, m, flag = 1, i, j;
+	int temp[27];
+	for (i = 1; i <= n; i++) temp[i] = indegree[i];
+	for (i = 1; i <= n; i++) {
+		m = 0;
+		for (j = 1; j <= n; j++) {//查找入度为零的顶点的个数
+			if (temp[j] == 0) {
+				m++;
+				loc = j;
+			}
+		}
+		if (m == 0) return 0;//有环
+		if (m > 1) flag = -1;//无序 有不止一个最小的 如A < C, B < C 无法比较A B
+		q[c++] = loc;//入度为零的点入队
+		temp[loc] = -1;//废弃这个点
+		for (j = 1; j <= n; j++) if (map[loc][j] == 1) temp[j]--;//所有被它指向的节点入度减1
+	}
+	return flag;
+}
+int main()
+{
+	int m, n, i, sign;
+	while (1) {
+		scanf("%d %d", &n, &m);
+		if (n == 0 && m == 0) break;
+		fill(map[0], map[0] + si * si, 0);
+		fill(indegree, indegree + si, 0);
+		sign = 0;
+		char str[5];
+		for (int i = 1; i <= m; i++) {
+			scanf("%s", str);
+			if (sign) continue;//一旦得出结果, 对后续的输入不做处理
+			int x = str[0] - 'A' + 1;
+			int y = str[2] - 'A' + 1;
+			map[x][y] = 1;
+			indegree[y]++;
+			int sta = Topo(n);
+			if (sta == 0) {//有环
+				printf("Inconsistency found after %d relations.\n", i);
+				sign = 1;
+			}
+			else if (sta == 1){
+				printf("Sorted sequence determined after %d relations: ", i);
+				for (int j = 0; j < n; j++) {
+					printf("%c", q[j] + 'A' - 1);
+				}
+				printf(".\n");
+				sign = 1;
+			}
+		}
+		if (!sign)
+			printf("Sorted sequence cannot be determined.\n");
+	}
+    return 0;
+}
