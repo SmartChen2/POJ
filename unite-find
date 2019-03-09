@@ -1,0 +1,41 @@
+#include <stdio.h>
+const int MAXN = 1006;
+int rk[MAXN];
+int par[MAXN];
+
+void init() {
+	for (int i = 0; i < MAXN; i++) {
+		rk[i] = 0;
+		par[i] = i;
+	}
+}
+int find(int x) {
+	if (x == par[x]) return par[x];
+	return par[x] = find(par[x]);
+}
+void unite(int x, int y) {
+	x = find(x);
+	y = find(y);
+	if (x == y) return;
+	if (rk[x] < rk[y]) {
+		par[x] = par[y];
+	}
+	else {
+		par[y] = par[x];
+		if (rk[x] == rk[y]) rk[x]++;
+	}
+}
+bool same(int x, int y) {
+	return find(x) == find(y);
+}
+int main()
+{
+   多组数据输入的时候别忘了init初始化数组
+   find()函数体里面只有第一个是x 其它的都是par[x]
+    
+	init();
+	int a, b;
+	scanf("%d %d", &a, &b);
+	if (!same(a, b)) unite(a, b);
+	return 0;
+}
